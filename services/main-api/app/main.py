@@ -15,7 +15,6 @@ from starlette.responses import Response
 
 from app import __version__
 from app.config import get_settings
-from app.routers import aws_resources
 
 # Configure logging
 logging.basicConfig(
@@ -139,7 +138,9 @@ async def add_version_info(data: Dict) -> Dict:
     }
 
 
-# Include routers
+# Include routers (imported here to avoid circular import)
+from app.routers import aws_resources
+
 app.include_router(
     aws_resources.router,
     prefix=settings.api_prefix,

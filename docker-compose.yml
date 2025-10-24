@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  auxiliary-service:
+    build:
+      context: ./services/auxiliary-service
+      dockerfile: Dockerfile
+    container_name: auxiliary-service
+    ports:
+      - "8001:8001"
+    environment:
+      - AWS_REGION=${AWS_REGION:-eu-west-1}
+      - ENVIRONMENT=development
+    volumes:
+      - ~/.aws:/home/appuser/.aws:ro
+    networks:
+      - aws-challenge-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  main-api:
+    build:
+      context: ./services/main-api
+      dockerfile: Dockerfile
+    container_name: main-api
+    ports:
+      - "8000:8000"
+    environment:
+      - AUXILIARY_SERVICE_URL=http://auxiliary-service:8001
+      - ENVIRONMENT=development
+    depends_on:
+      - auxiliary-service
+    networks:
+      - aws-challenge-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  aws-challenge-net:
+    driver: bridge

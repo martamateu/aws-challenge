@@ -7,7 +7,6 @@ import httpx
 from fastapi import APIRouter, HTTPException, Request, Query
 
 from app.config import get_settings
-from app.main import add_version_info
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -81,7 +80,7 @@ async def list_s3_buckets(request: Request):
     logger.info("Listing S3 buckets")
     
     data = await call_auxiliary_service(request, "/aws/s3/buckets")
-    return await add_version_info(data)
+    return data
 
 
 @router.get("/parameters")
@@ -102,7 +101,7 @@ async def list_parameters(request: Request, path_prefix: Optional[str] = Query(N
         params["path_prefix"] = path_prefix
     
     data = await call_auxiliary_service(request, "/aws/parameters", params)
-    return await add_version_info(data)
+    return data
 
 
 @router.get("/parameters/value")
@@ -129,4 +128,4 @@ async def get_parameter_value(
     }
     
     data = await call_auxiliary_service(request, "/aws/parameters/value", params)
-    return await add_version_info(data)
+    return data
