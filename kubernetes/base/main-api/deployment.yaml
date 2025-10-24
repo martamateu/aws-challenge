@@ -25,7 +25,7 @@ spec:
       serviceAccountName: main-api-sa
       containers:
       - name: main-api
-        image: YOUR_DOCKERHUB_USERNAME/main-api:latest
+        image: martamateul/main-api:main-49ca919
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

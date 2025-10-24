@@ -25,7 +25,7 @@ spec:
       serviceAccountName: auxiliary-service-sa
       containers:
       - name: auxiliary-service
-        image: YOUR_DOCKERHUB_USERNAME/auxiliary-service:latest
+        image: martamateul/auxiliary-service:main-49ca919
         imagePullPolicy: Always
         ports:
         - containerPort: 8001
