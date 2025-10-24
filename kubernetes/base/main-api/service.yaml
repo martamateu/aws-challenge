@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: main-api-service
+  namespace: main-api
+  labels:
+    app: main-api
+    project: aws-challenge
+spec:
+  type: LoadBalancer
+  selector:
+    app: main-api
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+    protocol: TCP
+  sessionAffinity: None
