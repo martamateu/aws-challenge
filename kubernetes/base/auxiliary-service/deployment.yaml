@@ -25,7 +25,7 @@ spec:
       serviceAccountName: auxiliary-service-sa
       containers:
       - name: auxiliary-service
-        image: martamateul/auxiliary-service:main-49ca919
+        image: martamateul/auxiliary-service:main-7d15e97
         imagePullPolicy: Always
         ports:
         - containerPort: 8001
