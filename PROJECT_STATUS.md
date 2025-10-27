@@ -109,12 +109,23 @@
 
 ### 7. Kubernetes Manifests
 - ✅ Base manifests (deployment, service, configmap)
-- ✅ Organized namespaces
+- ✅ Organized namespaces (main-api, auxiliary-service, monitoring)
 - ✅ Kustomization for overlays
-- ✅ Argo CD applications
-- ✅ Monitoring stack (Prometheus, Grafana)
+- ✅ Argo CD applications configured
+- ✅ **Prometheus & Grafana stack installed** (kube-prometheus-stack)
+- ✅ **ServiceMonitors for automatic metrics scraping**
+- ✅ Metrics endpoints with Prometheus annotations
 
-### 8. Project Configuration
+### 8. API Response Versions
+- ✅ **All API responses include both service versions**
+  - `main_api_version` in JSON responses
+  - `auxiliary_service_version` in JSON responses
+  - Meets requirement: version info in every response
+- ✅ Version info also in custom headers
+  - `X-Main-API-Version`
+  - `X-Auxiliary-Service-Version`
+
+### 9. Project Configuration
 - ✅ Complete .gitignore
 - ✅ .dockerignore for efficient builds
 - ✅ pytest.ini for both services
