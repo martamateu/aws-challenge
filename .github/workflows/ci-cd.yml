@@ -48,14 +48,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-cov pytest-asyncio httpx
+          pip install -r requirements-test.txt
       
       - name: Run tests
         working-directory: services/main-api
         run: |
-          # Add tests when available
-          echo "Tests would run here"
-          # pytest tests/ --cov=app --cov-report=xml
+          pytest tests/ --cov=app --cov-report=xml --cov-report=term -v
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: services/main-api/coverage.xml
+          flags: main-api
+          name: main-api-coverage
+        continue-on-error: true
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -119,14 +125,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-cov moto pytest-asyncio
+          pip install -r requirements-test.txt
       
       - name: Run tests
         working-directory: services/auxiliary-service
         run: |
-          # Add tests when available
-          echo "Tests would run here"
-          # pytest tests/ --cov=app --cov-report=xml
+          pytest tests/ --cov=app --cov-report=xml --cov-report=term -v
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: services/auxiliary-service/coverage.xml
+          flags: auxiliary-service
+          name: auxiliary-service-coverage
+        continue-on-error: true
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
