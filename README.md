@@ -212,12 +212,23 @@ terraform output -json > terraform-outputs.json
 
 Add the following secrets to your GitHub repository (Settings > Secrets and variables > Actions):
 
-```
-AWS_REGION=your-aws-region
-AWS_ACCOUNT_ID=your-aws-account-id
+```bash
+# AWS Configuration (using OIDC - no static credentials needed!)
+AWS_ROLE_ARN=arn:aws:iam::your-account-id:role/aws-challenge-github-actions-dev
+AWS_DEFAULT_REGION=your-aws-region
+
+# Docker Hub credentials
 DOCKER_USERNAME=your-docker-username
-DOCKER_PASSWORD=your-docker-password
+DOCKER_PASSWORD=your-docker-password-or-token
 ```
+
+**Get the AWS Role ARN** from Terraform output:
+```bash
+cd terraform/environments/dev
+terraform output github_actions_role_arn
+```
+
+> **Note**: This project uses GitHub OIDC for AWS authentication (best practice). No need for `AWS_ACCESS_KEY_ID` or `AWS_SECRET_ACCESS_KEY`. See `docs/GITHUB-OIDC-SETUP.md` for details.
 
 ### 4. Install Argo CD
 
