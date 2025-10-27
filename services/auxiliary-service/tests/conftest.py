@@ -6,10 +6,18 @@ from fastapi.testclient import TestClient
 from moto import mock_s3, mock_ssm
 import boto3
 import sys
+import os
 from pathlib import Path
 
 # Add parent directory to path to import app module
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# Set AWS credentials before importing app
+os.environ['AWS_ACCESS_KEY_ID'] = 'testing'
+os.environ['AWS_SECRET_ACCESS_KEY'] = 'testing'
+os.environ['AWS_SECURITY_TOKEN'] = 'testing'
+os.environ['AWS_SESSION_TOKEN'] = 'testing'
+os.environ['AWS_DEFAULT_REGION'] = 'eu-west-1'
 
 from app.main import app
 
@@ -23,7 +31,7 @@ def client():
 @pytest.fixture
 def aws_credentials():
     """Mock AWS Credentials for moto."""
-    import os
+    # Already set in module level, but ensure they're set
     os.environ['AWS_ACCESS_KEY_ID'] = 'testing'
     os.environ['AWS_SECRET_ACCESS_KEY'] = 'testing'
     os.environ['AWS_SECURITY_TOKEN'] = 'testing'

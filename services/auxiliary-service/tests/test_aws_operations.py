@@ -56,7 +56,7 @@ def test_list_ssm_parameters_endpoint(client, aws_credentials):
     ssm.put_parameter(Name='/app/test/param1', Value='value1', Type='String')
     ssm.put_parameter(Name='/app/test/param2', Value='value2', Type='String')
     
-    response = client.get("/aws/ssm/parameters")
+    response = client.get("/aws/parameters")
     
     assert response.status_code == 200
     data = response.json()
@@ -74,7 +74,7 @@ def test_list_ssm_parameters_with_prefix(client, aws_credentials):
     ssm.put_parameter(Name='/app/test/param1', Value='value1', Type='String')
     ssm.put_parameter(Name='/app/other/param2', Value='value2', Type='String')
     
-    response = client.get("/aws/ssm/parameters?path_prefix=/app/test")
+    response = client.get("/aws/parameters?path_prefix=/app/test")
     
     assert response.status_code == 200
     data = response.json()
@@ -99,7 +99,7 @@ def test_get_ssm_parameter_value_endpoint(client, aws_credentials):
         Description='Test parameter'
     )
     
-    response = client.get("/aws/ssm/parameter?name=/app/test/param1")
+    response = client.get("/aws/parameters/value?name=/app/test/param1")
     
     assert response.status_code == 200
     data = response.json()
@@ -114,7 +114,7 @@ def test_get_ssm_parameter_value_endpoint(client, aws_credentials):
 @mock_ssm
 def test_get_ssm_parameter_not_found(client, aws_credentials):
     """Test getting a non-existent SSM parameter."""
-    response = client.get("/aws/ssm/parameter?name=/app/test/nonexistent")
+    response = client.get("/aws/parameters/value?name=/app/test/nonexistent")
     
     # Should return 404 or error response
     assert response.status_code in [404, 500]
@@ -132,7 +132,7 @@ def test_get_ssm_parameter_secure_string(client, aws_credentials):
         Description='Secret parameter'
     )
     
-    response = client.get("/aws/ssm/parameter?name=/app/test/secret")
+    response = client.get("/aws/parameters/value?name=/app/test/secret")
     
     assert response.status_code == 200
     data = response.json()
@@ -145,7 +145,7 @@ def test_get_ssm_parameter_secure_string(client, aws_credentials):
 
 def test_get_ssm_parameter_missing_name(client):
     """Test getting parameter without providing name."""
-    response = client.get("/aws/ssm/parameter")
+    response = client.get("/aws/parameters/value")
     
     # Should return 422 for missing required query parameter
     assert response.status_code == 422
