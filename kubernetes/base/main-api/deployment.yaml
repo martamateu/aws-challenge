@@ -25,7 +25,7 @@ spec:
       serviceAccountName: main-api-sa
       containers:
       - name: main-api
-        image: martamateul/main-api:main-7d15e97
+        image: martamateul/main-api:main-dc64049
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
