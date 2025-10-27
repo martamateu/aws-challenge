@@ -80,7 +80,12 @@ async def list_s3_buckets(request: Request):
     logger.info("Listing S3 buckets")
     
     data = await call_auxiliary_service(request, "/aws/s3/buckets")
-    return data
+    
+    # Add main API version
+    return {
+        **data,
+        "main_api_version": settings.app_version
+    }
 
 
 @router.get("/parameters")
@@ -101,7 +106,12 @@ async def list_parameters(request: Request, path_prefix: Optional[str] = Query(N
         params["path_prefix"] = path_prefix
     
     data = await call_auxiliary_service(request, "/aws/parameters", params)
-    return data
+    
+    # Add main API version
+    return {
+        **data,
+        "main_api_version": settings.app_version
+    }
 
 
 @router.get("/parameters/value")
@@ -128,4 +138,9 @@ async def get_parameter_value(
     }
     
     data = await call_auxiliary_service(request, "/aws/parameters/value", params)
-    return data
+    
+    # Add main API version
+    return {
+        **data,
+        "main_api_version": settings.app_version
+    }

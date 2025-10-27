@@ -134,7 +134,7 @@ async def list_s3_buckets():
     List all S3 buckets in the AWS account.
     
     Returns:
-        JSON response with list of S3 buckets
+        JSON response with list of S3 buckets and version information
         
     Raises:
         HTTPException: If AWS API call fails
@@ -143,7 +143,12 @@ async def list_s3_buckets():
         AWS_API_CALLS.labels(service='s3', operation='list_buckets', status='attempt').inc()
         result = aws_service.list_s3_buckets()
         AWS_API_CALLS.labels(service='s3', operation='list_buckets', status='success').inc()
-        return result
+        
+        # Add version information
+        return {
+            **result,
+            "auxiliary_service_version": settings.app_version
+        }
     
     except Exception as e:
         AWS_API_CALLS.labels(service='s3', operation='list_buckets', status='error').inc()
@@ -171,7 +176,12 @@ async def list_parameters(
         AWS_API_CALLS.labels(service='ssm', operation='describe_parameters', status='attempt').inc()
         result = aws_service.list_parameters(path_prefix)
         AWS_API_CALLS.labels(service='ssm', operation='describe_parameters', status='success').inc()
-        return result
+        
+        # Add version information
+        return {
+            **result,
+            "auxiliary_service_version": settings.app_version
+        }
     
     except Exception as e:
         AWS_API_CALLS.labels(service='ssm', operation='describe_parameters', status='error').inc()
@@ -201,7 +211,12 @@ async def get_parameter_value(
         AWS_API_CALLS.labels(service='ssm', operation='get_parameter', status='attempt').inc()
         result = aws_service.get_parameter_value(name, decrypt)
         AWS_API_CALLS.labels(service='ssm', operation='get_parameter', status='success').inc()
-        return result
+        
+        # Add version information
+        return {
+            **result,
+            "auxiliary_service_version": settings.app_version
+        }
     
     except Exception as e:
         AWS_API_CALLS.labels(service='ssm', operation='get_parameter', status='error').inc()
