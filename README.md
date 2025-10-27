@@ -270,23 +270,35 @@ argocd app sync auxiliary-service
 ### 6. Install Monitoring Stack (Optional)
 
 ```bash
-# Add Helm repos
+# Add Helm repo
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 
-# Install Prometheus
-helm install prometheus prometheus-community/kube-prometheus-stack \
-  -n monitoring \
+# Install Prometheus & Grafana (kube-prometheus-stack)
+helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
   --create-namespace \
-  -f monitoring/prometheus/values.yaml
+  --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+
+# Wait for all pods to be ready (takes 2-3 minutes)
+kubectl wait --for=condition=Ready pods --all -n monitoring --timeout=300s
 
 # Verify installation
 kubectl get pods -n monitoring
 
+# Get Grafana password
+kubectl get secret -n monitoring kube-prometheus-stack-grafana \
+  -o jsonpath="{.data.admin-password}" | base64 -d && echo
+
 # Access Grafana
-kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
-# Username: admin, Password: prom-operator (or as defined in values.yaml)
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
+# Then open: http://localhost:3000
+# Username: admin
+# Password: (from command above, default: prom-operator)
+
+# Access Prometheus (optional)
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
+# Then open: http://localhost:9090
 ```
 
 ## 🧪 API Testing
@@ -423,24 +435,39 @@ Content-Type: application/json
 ### Access Prometheus
 
 ```bash
-kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
 ```
 
 Open http://localhost:9090
 
+**Example queries:**
+- `main_api_requests_total` - Total API requests
+- `main_api_request_duration_seconds` - Request latency
+- `up{namespace="main-api"}` - Service availability
+
 ### Access Grafana
 
 ```bash
-kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
 ```
 
 Open http://localhost:3000
 
-**Included dashboards:**
-- Kubernetes Cluster Monitoring
-- Microservices Performance
-- AWS API Calls Metrics
-- Request/Response Times
+**Credentials:**
+- Username: `admin`
+- Password: `prom-operator` (get with: `kubectl get secret -n monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 -d`)
+
+**Available metrics:**
+- Kubernetes cluster monitoring (pre-installed dashboards)
+- Microservices performance metrics
+- API request/response times
+- Pod resource usage (CPU, memory)
+
+### ServiceMonitors
+
+The project includes ServiceMonitors for automatic metrics discovery:
+- `kubernetes/monitoring/servicemonitor-main-api.yaml` - Scrapes main-api `/metrics`
+- `kubernetes/monitoring/servicemonitor-auxiliary-service.yaml` - Scrapes auxiliary-service `/metrics`
 
 ## 🔒 Security
 
