@@ -197,16 +197,15 @@
 ## 📈 Potential Improvements (Optional)
 
 ### Low Priority
-- [ ] Improve AWS mocks in tests (some tests fail without real credentials)
 - [ ] Add more end-to-end integration tests
-- [ ] Configure Codecov for coverage visualization
+- [ ] Configure Codecov for coverage visualization (partially configured)
 - [ ] Implement rate limiting in APIs
 - [ ] Add JWT authentication
+- [ ] Add request/response validation middleware
 
 ### Nice to Have
-- [ ] Deploy to EKS (currently local with Docker)
-- [ ] Configure Grafana dashboards
-- [ ] Implement distributed tracing (Jaeger/OpenTelemetry)
+- [ ] Implement distributed tracing (Jacer/OpenTelemetry)
+- [ ] Deploy to EKS (upgrade from Kind to AWS EKS)
 - [ ] Add database (RDS)
 - [ ] Implement cache (Redis/ElastiCache)
 
