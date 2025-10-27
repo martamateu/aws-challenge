@@ -1,25 +1,25 @@
 # API Documentation
 
-Documentación completa de los endpoints de la Main API y Auxiliary Service.
+Complete documentation for Main API and Auxiliary Service endpoints.
 
-## 📖 Tabla de Contenidos
+## 📖 Table of Contents
 
 - [Main API Endpoints](#main-api-endpoints)
 - [Auxiliary Service Endpoints](#auxiliary-service-endpoints)
-- [Versionado](#versionado)
-- [Códigos de Estado](#códigos-de-estado)
-- [Autenticación](#autenticación)
+- [Versioning](#versioning)
+- [Status Codes](#status-codes)
+- [Authentication](#authentication)
 - [Rate Limiting](#rate-limiting)
 
 ## 🚀 Main API Endpoints
 
-Base URL: `http://localhost:8000` (local) o el endpoint del LoadBalancer en Kubernetes.
+Base URL: `http://localhost:8000` (local) or the LoadBalancer endpoint in Kubernetes.
 
 ### Health & Info
 
 #### GET /health
 
-Health check del servicio y verificación de conectividad con Auxiliary Service.
+Service health check and connectivity verification with Auxiliary Service.
 
 **Response 200 - Healthy:**
 ```json
@@ -45,7 +45,7 @@ Health check del servicio y verificación de conectividad con Auxiliary Service.
 
 #### GET /version
 
-Obtiene información de versión del servicio.
+Get service version information.
 
 **Response:**
 ```json
@@ -60,7 +60,7 @@ Obtiene información de versión del servicio.
 
 #### GET /
 
-Endpoint raíz con información del API.
+Root endpoint with API information.
 
 **Response:**
 ```json
@@ -78,7 +78,7 @@ Endpoint raíz con información del API.
 
 #### GET /api/v1/s3/buckets
 
-Lista todos los buckets de S3 en la cuenta de AWS.
+List all S3 buckets in the AWS account.
 
 **Headers:**
 ```
@@ -109,26 +109,26 @@ X-Auxiliary-Service-Version: 1.0.0
 }
 ```
 
-**Errores posibles:**
-- `503 Service Unavailable` - No se puede conectar con Auxiliary Service
-- `500 Internal Server Error` - Error en AWS SDK
+**Possible errors:**
+- `503 Service Unavailable` - Cannot connect to Auxiliary Service
+- `500 Internal Server Error` - AWS SDK error
 
-**Ejemplo con curl:**
+**Example with curl:**
 ```bash
 curl http://localhost:8000/api/v1/s3/buckets | jq
 ```
 
-**Ejemplo con httpie:**
+**Example with httpie:**
 ```bash
 http GET http://localhost:8000/api/v1/s3/buckets
 ```
 
 #### GET /api/v1/parameters
 
-Lista todos los parámetros de AWS Systems Manager Parameter Store.
+List all parameters from AWS Systems Manager Parameter Store.
 
 **Query Parameters:**
-- `path_prefix` (opcional): Filtrar parámetros por prefijo de path
+- `path_prefix` (optional): Filter parameters by path prefix
 
 **Response 200:**
 ```json
@@ -160,12 +160,12 @@ Lista todos los parámetros de AWS Systems Manager Parameter Store.
 }
 ```
 
-**Con filtro de path:**
+**With path filter:**
 ```bash
 curl "http://localhost:8000/api/v1/parameters?path_prefix=/aws-challenge/dev/database" | jq
 ```
 
-**Response con filtro:**
+**Response with filter:**
 ```json
 {
   "parameters": [
@@ -191,11 +191,11 @@ curl "http://localhost:8000/api/v1/parameters?path_prefix=/aws-challenge/dev/dat
 
 #### GET /api/v1/parameters/value
 
-Obtiene el valor de un parámetro específico del Parameter Store.
+Get the value of a specific parameter from Parameter Store.
 
 **Query Parameters:**
-- `name` (requerido): Nombre del parámetro
-- `decrypt` (opcional, default: true): Descifrar SecureString parameters
+- `name` (required): Parameter name
+- `decrypt` (optional, default: true): Decrypt SecureString parameters
 
 **Response 200:**
 ```json
@@ -218,15 +218,15 @@ Obtiene el valor de un parámetro específico del Parameter Store.
 }
 ```
 
-**Ejemplos:**
+**Examples:**
 ```bash
-# Obtener parámetro normal
+# Get normal parameter
 curl "http://localhost:8000/api/v1/parameters/value?name=/aws-challenge/dev/database/host" | jq
 
-# Obtener SecureString (descifrado)
+# Get SecureString (decrypted)
 curl "http://localhost:8000/api/v1/parameters/value?name=/aws-challenge/dev/api/key&decrypt=true" | jq
 
-# Obtener SecureString (sin descifrar)
+# Get SecureString (without decryption)
 curl "http://localhost:8000/api/v1/parameters/value?name=/aws-challenge/dev/api/key&decrypt=false" | jq
 ```
 
@@ -234,9 +234,9 @@ curl "http://localhost:8000/api/v1/parameters/value?name=/aws-challenge/dev/api/
 
 #### GET /metrics
 
-Endpoint de métricas Prometheus.
+Prometheus metrics endpoint.
 
-**Response (formato Prometheus):**
+**Response (Prometheus format):**
 ```
 # HELP main_api_requests_total Total request count
 # TYPE main_api_requests_total counter
@@ -249,20 +249,20 @@ main_api_request_duration_seconds_bucket{endpoint="/health",method="GET",le="0.0
 ...
 ```
 
-**Ejemplo:**
+**Example:**
 ```bash
 curl http://localhost:8000/metrics
 ```
 
 ## 🔧 Auxiliary Service Endpoints
 
-Base URL: `http://auxiliary-service.auxiliary-service.svc.cluster.local:8001` (interno) o `http://localhost:8001` (port-forward).
+Base URL: `http://auxiliary-service.auxiliary-service.svc.cluster.local:8001` (internal) or `http://localhost:8001` (port-forward).
 
 ### Health & Info
 
 #### GET /health
 
-Health check con verificación de conectividad AWS.
+Health check with AWS connectivity verification.
 
 **Response 200:**
 ```json
@@ -288,7 +288,7 @@ Health check con verificación de conectividad AWS.
 
 #### GET /version
 
-Información de versión.
+Version information.
 
 **Response:**
 ```json
@@ -304,7 +304,7 @@ Información de versión.
 
 #### GET /aws/s3/buckets
 
-Lista buckets de S3 directamente usando AWS SDK.
+List S3 buckets directly using AWS SDK.
 
 **Response 200:**
 ```json
@@ -328,10 +328,10 @@ Lista buckets de S3 directamente usando AWS SDK.
 
 #### GET /aws/parameters
 
-Lista parámetros del Parameter Store.
+List Parameter Store parameters.
 
 **Query Parameters:**
-- `path_prefix` (opcional): Filtrar por path
+- `path_prefix` (optional): Filter by path
 
 **Response 200:**
 ```json
@@ -351,11 +351,11 @@ Lista parámetros del Parameter Store.
 
 #### GET /aws/parameters/value
 
-Obtiene valor de parámetro específico.
+Get specific parameter value.
 
 **Query Parameters:**
-- `name` (requerido): Nombre del parámetro
-- `decrypt` (opcional, default: true): Descifrar SecureStrings
+- `name` (required): Parameter name
+- `decrypt` (optional, default: true): Decrypt SecureStrings
 
 **Response 200:**
 ```json
@@ -378,18 +378,18 @@ Obtiene valor de parámetro específico.
 
 #### GET /metrics
 
-Métricas Prometheus.
+Prometheus metrics.
 
-**Métricas específicas:**
-- `auxiliary_service_requests_total`: Total de requests
-- `auxiliary_service_request_duration_seconds`: Duración de requests
-- `auxiliary_service_aws_api_calls_total`: Total de llamadas a AWS API
+**Specific metrics:**
+- `auxiliary_service_requests_total`: Total requests
+- `auxiliary_service_request_duration_seconds`: Request duration
+- `auxiliary_service_aws_api_calls_total`: Total AWS API calls
 
-## 📊 Versionado
+## 📊 Versioning
 
-Todas las respuestas de la Main API incluyen información de versión:
+All Main API responses include version information:
 
-### En el Body (JSON)
+### In the Body (JSON)
 
 ```json
 {
@@ -399,59 +399,59 @@ Todas las respuestas de la Main API incluyen información de versión:
 }
 ```
 
-### En los Headers
+### In the Headers
 
 ```http
 X-Main-API-Version: 1.0.0
 X-Auxiliary-Service-Version: 1.0.0
 ```
 
-### Ejemplo
+### Example
 
 ```bash
-# Ver headers completos
+# View complete headers
 curl -I http://localhost:8000/health
 
-# Resultado:
+# Result:
 HTTP/1.1 200 OK
 X-Main-API-Version: 1.0.0
 X-Auxiliary-Service-Version: 1.0.0
 Content-Type: application/json
 ```
 
-## 🔢 Códigos de Estado
+## 🔢 Status Codes
 
-| Código | Significado | Uso |
-|--------|-------------|-----|
-| 200 | OK | Request exitoso |
-| 404 | Not Found | Recurso no encontrado (ej: parámetro) |
-| 500 | Internal Server Error | Error interno del servidor |
-| 503 | Service Unavailable | Auxiliary Service no disponible |
-| 504 | Gateway Timeout | Timeout llamando a Auxiliary Service |
+| Code | Meaning | Usage |
+|------|---------|-------|
+| 200 | OK | Successful request |
+| 404 | Not Found | Resource not found (e.g.: parameter) |
+| 500 | Internal Server Error | Internal server error |
+| 503 | Service Unavailable | Auxiliary Service not available |
+| 504 | Gateway Timeout | Timeout calling Auxiliary Service |
 
-## 🔐 Autenticación
+## 🔐 Authentication
 
-**Versión actual**: Sin autenticación (desarrollo).
+**Current version**: No authentication (development).
 
-Para producción, se recomienda implementar:
-- API Keys en headers
+For production, recommended to implement:
+- API Keys in headers
 - JWT tokens
 - OAuth 2.0
 - mTLS (mutual TLS)
 
 ## ⏱️ Rate Limiting
 
-**Versión actual**: Sin rate limiting.
+**Current version**: No rate limiting.
 
-Para producción, se recomienda:
-- Rate limiting por IP
-- Rate limiting por API key
-- Usar Nginx Ingress Controller con rate limiting
-- Implementar circuit breaker pattern
+For production, recommended:
+- Rate limiting per IP
+- Rate limiting per API key
+- Use Nginx Ingress Controller with rate limiting
+- Implement circuit breaker pattern
 
-## 🧪 Ejemplos de Testing Completo
+## 🧪 Complete Testing Examples
 
-### Script de Testing
+### Testing Script
 
 ```bash
 #!/bin/bash
@@ -522,30 +522,30 @@ assert "X-Auxiliary-Service-Version" in response.headers
 print("All tests passed!")
 ```
 
-## 📚 Referencias
+## 📚 References
 
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [OpenAPI Specification](https://swagger.io/specification/)
 - [AWS SDK for Python (Boto3)](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)
 
-## 🎓 Acceso a Documentación Interactiva
+## 🎓 Interactive Documentation Access
 
-FastAPI genera automáticamente documentación interactiva:
+FastAPI automatically generates interactive documentation:
 
 ### Swagger UI
 
-Accede a `http://localhost:8000/docs` para ver la documentación interactiva con Swagger UI.
+Access `http://localhost:8000/docs` to view interactive documentation with Swagger UI.
 
-Características:
-- Probar endpoints directamente
-- Ver schemas de request/response
-- Autogenerada desde el código
+Features:
+- Test endpoints directly
+- View request/response schemas
+- Auto-generated from code
 
 ### ReDoc
 
-Accede a `http://localhost:8000/redoc` para ver la documentación con ReDoc.
+Access `http://localhost:8000/redoc` to view documentation with ReDoc.
 
-Características:
-- Vista más limpia y organizada
-- Mejor para lectura
-- Descarga de especificación OpenAPI
+Features:
+- Cleaner and more organized view
+- Better for reading
+- Download OpenAPI specification

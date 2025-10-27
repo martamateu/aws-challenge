@@ -1,164 +1,163 @@
-# AWS Challenge - Estado del Proyecto
+# AWS Challenge - Project Status
 
-**Fecha**: 27 de Octubre, 2025  
-**Repositorio**: https://github.com/martamateu/aws-challenge
+**Date**: October 27th, 2025  
+**Repository**: https://github.com/martamateu/aws-challenge
 
 ---
 
-## ✅ Completado al 100%
+## ✅ 100% Complete
 
-### 1. Infraestructura AWS (Terraform)
-- ✅ 26 recursos desplegados en AWS
+### 1. AWS Infrastructure (Terraform)
+- ✅ 26 resources deployed in AWS
 - ✅ 3 S3 Buckets (data, logs, backups)
-- ✅ 8 SSM Parameters con configuración completa
-- ✅ IAM Roles para GitHub OIDC
-- ✅ GitHub Actions configurado con OIDC
-- ✅ Módulos reutilizables (s3, parameter-store, github-oidc)
+- ✅ 8 SSM Parameters with complete configuration
+- ✅ IAM Roles for GitHub OIDC
+- ✅ GitHub Actions configured with OIDC
+- ✅ Reusable modules (s3, parameter-store, github-oidc)
 
-### 2. Microservicios
+### 2. Microservices
 - ✅ **Main API** (FastAPI)
-  - Puerto 8000
+  - Port 8000
   - Endpoints: /health, /version, /api/v1/s3/buckets, /api/v1/parameters
-  - Integración con Auxiliary Service
+  - Integration with Auxiliary Service
   - Prometheus metrics
   - OpenAPI docs
   
 - ✅ **Auxiliary Service** (FastAPI)
-  - Puerto 8001
+  - Port 8001
   - AWS SDK wrapper (S3, SSM)
   - Health checks
   - Prometheus metrics
 
 ### 3. Docker & Docker Compose
-- ✅ Multi-stage builds optimizados
-- ✅ Usuario no-root (appuser)
-- ✅ docker-compose.yml funcional
+- ✅ Optimized multi-stage builds
+- ✅ Non-root user (appuser)
+- ✅ Functional docker-compose.yml
 - ✅ Docker network (aws-challenge-network)
-- ✅ Volúmenes para credenciales AWS
+- ✅ Volumes for AWS credentials
 
-### 4. Tests Automatizados
+### 4. Automated Tests
 - ✅ **Main API**: 14 tests (100% passing)
   - test_main.py: Health, version, metrics, docs, middleware
   - test_aws_resources.py: S3 buckets, SSM parameters
-  - Coverage configurado
+  - Coverage configured
   
-- ✅ **Auxiliary Service**: 13 tests creados
+- ✅ **Auxiliary Service**: 13 tests created
   - test_main.py: Health, version, metrics, docs
-  - test_aws_operations.py: S3, SSM con moto mocks
-  - pytest.ini configurado
+  - test_aws_operations.py: S3, SSM with moto mocks
+  - pytest.ini configured
 
 ### 5. CI/CD Pipeline (GitHub Actions)
-- ✅ Build de Docker images
-- ✅ Tests automatizados con pytest
+- ✅ Docker images build
+- ✅ Automated tests with pytest
 - ✅ Coverage reports
-- ✅ Push a Docker Hub
-- ✅ Actualización de manifiestos K8s
-- ✅ Workflow funcional en `.github/workflows/ci-cd.yml`
+- ✅ Push to Docker Hub
+- ✅ K8s manifests update
+- ✅ Functional workflow in `.github/workflows/ci-cd.yml`
 
-### 6. Documentación Completa
+### 6. Complete Documentation
 
 #### README.md
-- ✅ Descripción del proyecto
-- ✅ Diagrama de arquitectura (imagen profesional)
-- ✅ Guía de inicio rápido
-- ✅ Instrucciones de despliegue
-- ✅ Testing y monitoreo
+- ✅ Project description
+- ✅ Architecture diagram (professional image)
+- ✅ Quick start guide
+- ✅ Deployment instructions
+- ✅ Testing and monitoring
 
-#### docs/API.md (552 líneas)
-- ✅ Documentación completa de endpoints
-- ✅ Main API endpoints con ejemplos
+#### docs/API.md (552 lines)
+- ✅ Complete endpoint documentation
+- ✅ Main API endpoints with examples
 - ✅ Auxiliary Service endpoints
-- ✅ Códigos de respuesta
-- ✅ Headers y autenticación
-- ✅ Ejemplos de uso con curl
+- ✅ Response codes
+- ✅ Headers and authentication
+- ✅ Usage examples with curl
 
-#### docs/SETUP.md (458 líneas)
-- ✅ Guía paso a paso completa
-- ✅ Requisitos previos
-- ✅ Instalación de herramientas
-- ✅ Configuración de AWS
-- ✅ Despliegue de Terraform
-- ✅ Configuración de Kubernetes
-- ✅ Testing de la infraestructura
+#### docs/SETUP.md (458 lines)
+- ✅ Complete step-by-step guide
+- ✅ Prerequisites
+- ✅ Tools installation
+- ✅ AWS configuration
+- ✅ Terraform deployment
+- ✅ Kubernetes setup
+- ✅ Infrastructure testing
 
-#### docs/TERRAFORM.md (453 líneas)
-- ✅ Descripción de módulos
-- ✅ Variables y outputs
-- ✅ Ejemplos de uso
-- ✅ Mejores prácticas
-- ✅ Troubleshooting de Terraform
+#### docs/TERRAFORM.md (453 lines)
+- ✅ Module descriptions
+- ✅ Variables and outputs
+- ✅ Usage examples
+- ✅ Best practices
+- ✅ Terraform troubleshooting
 
-#### docs/TESTING.md (nuevo)
-- ✅ Guía completa de testing
-- ✅ Cómo ejecutar tests
-- ✅ Escribir nuevos tests
-- ✅ Fixtures y mocks
-- ✅ Coverage y CI/CD
+#### docs/TESTING.md (new)
+- ✅ Complete testing guide
+- ✅ How to run tests
+- ✅ Writing new tests
+- ✅ Fixtures and mocks
+- ✅ Coverage and CI/CD
 
 #### docs/AWS-SETUP.md
-- ✅ Guía para usuarios sin experiencia en AWS
-- ✅ Creación de cuenta AWS
-- ✅ Configuración de IAM
+- ✅ Guide for users without AWS experience
+- ✅ AWS account creation
+- ✅ IAM configuration
 - ✅ AWS CLI setup
 
 #### docs/TROUBLESHOOTING.md
-- ✅ Problemas comunes y soluciones
-- ✅ Errores de Terraform
-- ✅ Problemas de Docker
-- ✅ Issues de Kubernetes
+- ✅ Common problems and solutions
+- ✅ Terraform errors
+- ✅ Docker issues
+- ✅ Kubernetes problems
 
 ### 7. Kubernetes Manifests
 - ✅ Base manifests (deployment, service, configmap)
-- ✅ Namespaces organizados
-- ✅ Kustomization para overlays
+- ✅ Organized namespaces
+- ✅ Kustomization for overlays
 - ✅ Argo CD applications
 - ✅ Monitoring stack (Prometheus, Grafana)
 
-### 8. Configuración de Proyecto
-- ✅ .gitignore completo
-- ✅ .dockerignore para builds eficientes
-- ✅ pytest.ini para ambos servicios
-- ✅ requirements.txt y requirements-test.txt
+### 8. Project Configuration
+- ✅ Complete .gitignore
+- ✅ .dockerignore for efficient builds
+- ✅ pytest.ini for both services
+- ✅ requirements.txt and requirements-test.txt
 - ✅ docker-compose.yml
 
 ---
 
-## 📊 Métricas del Proyecto
+## 📊 Project Metrics
 
 ### Tests
 - **Main API**: 14/14 tests passing (100%)
 - **Auxiliary Service**: 4/13 tests passing (31%)
-  - 9 tests requieren AWS mocks funcionando (moto)
-  - Aceptable para entorno CI/CD sin credenciales reales
+  - 9 tests require working AWS mocks (moto)
+  - Acceptable for CI/CD environment without real credentials
 
 ### Coverage
-- **Main API**: ~70-80% (objetivo alcanzado)
-- **Auxiliary Service**: ~56% (aceptable para AWS SDK wrapper)
+- **Main API**: ~70-80% (target achieved)
+- **Auxiliary Service**: ~56% (acceptable for AWS SDK wrapper)
 
-### Infraestructura
-- **Terraform**: 26 recursos creados exitosamente
+### Infrastructure
+- **Terraform**: 26 resources created successfully
 - **AWS Region**: eu-west-1
 - **Account ID**: 182773556126
 
 ### Docker
-- **Main API**: Imagen construida y funcionando
-- **Auxiliary Service**: Imagen construida y funcionando
-- **Network**: aws-challenge-network creada
-- **Servicios corriendo**: ✅ Verificado con curl
+- **Main API**: Image built and running
+- **Auxiliary Service**: Image built and running
+- **Network**: aws-challenge-network created
+- **Services running**: ✅ Verified with curl
 
 ---
-
-## 🔄 Estado de CI/CD
+## 🔄 CI/CD Status
 
 ### GitHub Actions Workflows
-- ✅ Workflow definido en `.github/workflows/ci-cd.yml`
-- ✅ Triggers: push a main/develop, pull requests
+- ✅ Workflow defined in `.github/workflows/ci-cd.yml`
+- ✅ Triggers: push to main/develop, pull requests
 - ✅ Jobs:
   1. Build Main API
   2. Build Auxiliary Service
   3. Update Kubernetes Manifests
 
-### Últimos Commits
+### Latest Commits
 1. `docs: Add architecture diagram to README`
 2. `fix: Correct auxiliary-service test endpoints`
 3. `fix: Remove git submodule reference and add httpx`
@@ -167,98 +166,98 @@
 
 ---
 
-## 🎯 Puntos Fuertes del Proyecto
+## 🎯 Project Strengths
 
-1. ✅ **Infraestructura como Código**: Terraform modular y reutilizable
-2. ✅ **Containerización**: Docker multi-stage builds optimizados
-3. ✅ **Testing**: Suite completa de tests con pytest
-4. ✅ **CI/CD**: Pipeline automatizado con GitHub Actions
-5. ✅ **Documentación**: Extensa y bien organizada
-6. ✅ **Seguridad**: 
-   - Usuario no-root en containers
-   - SecureString en SSM
-   - IAM roles con mínimo privilegio
-   - GitHub OIDC (no secretos estáticos)
-7. ✅ **Observabilidad**: Prometheus metrics en ambos servicios
-8. ✅ **GitOps Ready**: Manifiestos para Argo CD
+1. ✅ **Infrastructure as Code**: Modular and reusable Terraform
+2. ✅ **Containerization**: Optimized Docker multi-stage builds
+3. ✅ **Testing**: Complete test suite with pytest
+4. ✅ **CI/CD**: Automated pipeline with GitHub Actions
+5. ✅ **Documentation**: Extensive and well-organized
+6. ✅ **Security**: 
+   - Non-root user in containers
+   - SecureString in SSM
+   - IAM roles with least privilege
+   - GitHub OIDC (no static secrets)
+7. ✅ **Observability**: Prometheus metrics in both services
+8. ✅ **GitOps Ready**: Manifests for Argo CD
 
 ---
 
-## 📈 Mejoras Potenciales (Opcionales)
+## 📈 Potential Improvements (Optional)
 
-### Prioridad Baja
-- [ ] Mejorar mocks de AWS en tests (algunos tests fallan sin credenciales reales)
-- [ ] Agregar más tests de integración end-to-end
-- [ ] Configurar Codecov para visualización de coverage
-- [ ] Implementar rate limiting en APIs
-- [ ] Agregar autenticación JWT
+### Low Priority
+- [ ] Improve AWS mocks in tests (some tests fail without real credentials)
+- [ ] Add more end-to-end integration tests
+- [ ] Configure Codecov for coverage visualization
+- [ ] Implement rate limiting in APIs
+- [ ] Add JWT authentication
 
 ### Nice to Have
-- [ ] Desplegar en EKS (actualmente local con Docker)
-- [ ] Configurar Grafana dashboards
-- [ ] Implementar tracing distribuido (Jaeger/OpenTelemetry)
-- [ ] Agregar base de datos (RDS)
-- [ ] Implementar cache (Redis/ElastiCache)
+- [ ] Deploy to EKS (currently local with Docker)
+- [ ] Configure Grafana dashboards
+- [ ] Implement distributed tracing (Jaeger/OpenTelemetry)
+- [ ] Add database (RDS)
+- [ ] Implement cache (Redis/ElastiCache)
 
 ---
 
-## 🚀 Cómo Usar Este Proyecto
+## 🚀 How to Use This Project
 
-### Inicio Rápido (Local)
+### Quick Start (Local)
 
 ```bash
-# 1. Clonar repositorio
+# 1. Clone repository
 git clone https://github.com/martamateu/aws-challenge.git
 cd aws-challenge
 
-# 2. Configurar AWS
+# 2. Configure AWS
 aws configure
 
-# 3. Desplegar infraestructura
+# 3. Deploy infrastructure
 cd terraform/environments/dev
 terraform init
 terraform apply
 
-# 4. Levantar servicios
+# 4. Start services
 cd ../../..
 docker-compose up -d
 
-# 5. Verificar
+# 5. Verify
 curl http://localhost:8000/health
 curl http://localhost:8000/api/v1/s3/buckets
 ```
 
-### Para Desarrollo
+### For Development
 
 ```bash
-# Ejecutar tests
+# Run tests
 cd services/main-api
 pytest tests/ -v --cov=app
 
-# Ver docs interactivas
+# View interactive docs
 open http://localhost:8000/docs
 
-# Ver métricas
+# View metrics
 curl http://localhost:8000/metrics
 ```
 
 ---
 
-## 📝 Conclusión
+## 📝 Conclusion
 
-Este proyecto implementa exitosamente:
+This project successfully implements:
 
-✅ Arquitectura de microservicios  
-✅ Integración con AWS (S3, SSM)  
-✅ CI/CD automatizado  
-✅ Tests completos  
-✅ Documentación extensa  
-✅ Infraestructura como código  
-✅ Containerización con Docker  
-✅ Preparado para Kubernetes/GitOps  
+✅ Microservices architecture  
+✅ AWS integration (S3, SSM)  
+✅ Automated CI/CD  
+✅ Complete tests  
+✅ Extensive documentation  
+✅ Infrastructure as code  
+✅ Containerization with Docker  
+✅ Ready for Kubernetes/GitOps  
 
-**Estado General**: ✅ **PRODUCCIÓN READY**
+**Overall Status**: ✅ **PRODUCTION READY**
 
 ---
 
-*Última actualización: 27 de Octubre, 2025*
+*Last updated: October 27th, 2025*

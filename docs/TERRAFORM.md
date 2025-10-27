@@ -1,94 +1,94 @@
 # Terraform Documentation
 
-Este documento explica la infraestructura como código (IaC) definida con Terraform para el proyecto aws-challenge.
+This document explains the Infrastructure as Code (IaC) defined with Terraform for the aws-challenge project.
 
-## 📑 Tabla de Contenidos
+## 📑 Table of Contents
 
-- [Descripción General](#descripción-general)
-- [Módulos](#módulos)
+- [Overview](#overview)
+- [Modules](#modules)
 - [Variables](#variables)
 - [Outputs](#outputs)
-- [Uso](#uso)
+- [Usage](#usage)
 
-## 🏗️ Descripción General
+## 🏗️ Overview
 
-La infraestructura está organizada en módulos reutilizables que siguen las mejores prácticas de Terraform:
+The infrastructure is organized into reusable modules that follow Terraform best practices:
 
-- **Modularidad**: Cada componente (S3, Parameter Store, IAM, GitHub OIDC) está en su propio módulo
-- **Reutilización**: Los módulos pueden ser reutilizados en diferentes entornos
-- **Seguridad**: Implementa principio de mínimo privilegio y cifrado por defecto
-- **Escalabilidad**: Fácil de extender y modificar
+- **Modularity**: Each component (S3, Parameter Store, IAM, GitHub OIDC) is in its own module
+- **Reusability**: Modules can be reused in different environments
+- **Security**: Implements principle of least privilege and encryption by default
+- **Scalability**: Easy to extend and modify
 
-## 📦 Módulos
+## 📦 Modules
 
-### 1. Módulo S3 (`modules/s3`)
+### 1. S3 Module (`modules/s3`)
 
-**Propósito**: Crear y gestionar buckets de S3 para almacenamiento de datos, logs y backups.
+**Purpose**: Create and manage S3 buckets for data, logs, and backups storage.
 
-**Recursos creados**:
+**Created resources**:
 - 3 S3 buckets:
-  - `{project}-data-{env}-{account_id}`: Almacenamiento de datos
-  - `{project}-logs-{env}-{account_id}`: Almacenamiento de logs
-  - `{project}-backups-{env}-{account_id}`: Almacenamiento de backups
+  - `{project}-data-{env}-{account_id}`: Data storage
+  - `{project}-logs-{env}-{account_id}`: Logs storage
+  - `{project}-backups-{env}-{account_id}`: Backups storage
 
-**Características**:
-- ✅ Versionado habilitado en buckets de data y backups
-- ✅ Cifrado AES256 por defecto en todos los buckets
-- ✅ Bloqueo de acceso público
-- ✅ Política de ciclo de vida para logs (retención de 90 días)
-- ✅ Transición a STANDARD_IA después de 30 días para logs
+**Features**:
+- ✅ Versioning enabled on data and backups buckets
+- ✅ AES256 encryption by default on all buckets
+- ✅ Public access block
+- ✅ Lifecycle policy for logs (90 days retention)
+- ✅ Transition to STANDARD_IA after 30 days for logs
 
 **Variables**:
 ```hcl
 variable "project_name" {
-  description = "Nombre del proyecto"
+  description = "Project name"
   type        = string
 }
 
 variable "environment" {
-  description = "Entorno (dev, staging, prod)"
+  description = "Environment (dev, staging, prod)"
   type        = string
 }
 
 variable "region" {
-  description = "Región de AWS"
+  description = "AWS Region"
   type        = string
 }
 
 variable "tags" {
-  description = "Tags adicionales"
+  description = "Additional tags"
   type        = map(string)
   default     = {}
 }
 ```
 
 **Outputs**:
-- `bucket_names`: Mapa con nombres de los buckets
-- `bucket_arns`: Lista de ARNs de los buckets
-- `data_bucket_id`, `logs_bucket_id`, `backups_bucket_id`: IDs individuales
+- `bucket_names`: Map with bucket names
+- `bucket_arns`: List of bucket ARNs
+- `data_bucket_id`, `logs_bucket_id`, `backups_bucket_id`: Individual IDs
 
-### 2. Módulo Parameter Store (`modules/parameter-store`)
+### 2. Parameter Store Module (`modules/parameter-store`)
 
-**Propósito**: Gestionar parámetros de configuración en AWS Systems Manager Parameter Store.
+**Purpose**: Manage configuration parameters in AWS Systems Manager Parameter Store.
 
-**Parámetros creados**:
+**Created parameters**:
 
-| Parámetro | Tipo | Descripción |
+| Parameter | Type | Description |
 |-----------|------|-------------|
-| `/{project}/{env}/database/host` | String | Hostname de la base de datos |
-| `/{project}/{env}/database/port` | String | Puerto de la base de datos |
-| `/{project}/{env}/database/name` | String | Nombre de la base de datos |
-| `/{project}/{env}/api/key` | SecureString | API Key (cifrada) |
-| `/{project}/{env}/api/secret` | SecureString | API Secret (cifrado) |
-| `/{project}/{env}/app/log-level` | String | Nivel de logging |
-| `/{project}/{env}/app/timeout` | String | Timeout de aplicación |
-| `/{project}/{env}/aws/region` | String | Región de AWS |
+| `/{project}/{env}/database/host` | String | Database hostname |
+| `/{project}/{env}/database/port` | String | Database port |
+| `/{project}/{env}/database/name` | String | Database name |
+| `/{project}/{env}/api/key` | SecureString | API Key (encrypted) |
+| `/{project}/{env}/api/secret` | SecureString | API Secret (encrypted) |
+| `/{project}/{env}/app/log-level` | String | Logging level |
+| `/{project}/{env}/app/timeout` | String | Application timeout |
+| `/{project}/{env}/aws/region` | String | AWS Region |
 
-**Características**:
-- ✅ Parámetros sensibles usan tipo `SecureString` (cifrado con KMS)
-- ✅ Lifecycle `ignore_changes` en valores sensibles para prevenir sobrescritura
-- ✅ Nomenclatura jerárquica para fácil filtrado
-- ✅ Tags descriptivos para categorización
+**Features**:
+- ✅ Sensitive parameters use `SecureString` type (encrypted with KMS)
+- ✅ Lifecycle `ignore_changes` on sensitive values to prevent overwrite
+- ✅ Hierarchical naming for easy filtering
+- ✅ Descriptive tags for categorization
 
 **Variables**:
 ```hcl
@@ -107,30 +107,30 @@ variable "tags" {
 ```
 
 **Outputs**:
-- `parameter_names`: Lista de nombres de parámetros
-- `parameter_arns`: Lista de ARNs de parámetros
-- `database_host_arn`, `api_key_arn`: ARNs específicos
+- `parameter_names`: List of parameter names
+- `parameter_arns`: List of parameter ARNs
+- `database_host_arn`, `api_key_arn`: Specific ARNs
 
-### 3. Módulo IAM (`modules/iam`)
+### 3. IAM Module (`modules/iam`)
 
-**Propósito**: Crear roles y políticas de IAM para Kubernetes Service Accounts (IRSA - IAM Roles for Service Accounts).
+**Purpose**: Create IAM roles and policies for Kubernetes Service Accounts (IRSA - IAM Roles for Service Accounts).
 
-**Recursos creados**:
+**Created resources**:
 
-1. **IAM Role para Auxiliary Service**
-   - Permite al pod asumir el rol mediante OIDC
-   - Trust policy vinculado al OIDC provider de EKS
-   - Condición: solo el ServiceAccount específico puede asumir el rol
+1. **IAM Role for Auxiliary Service**
+   - Allows pod to assume role via OIDC
+   - Trust policy bound to EKS OIDC provider
+   - Condition: only specific ServiceAccount can assume the role
 
-2. **Política de acceso a S3**
+2. **S3 Access Policy**
    - `ListBucket`, `GetBucketLocation`, `ListBucketVersions`
    - `GetObject`, `PutObject`, `DeleteObject`, `GetObjectVersion`
-   - `ListAllMyBuckets` (para listar todos los buckets de la cuenta)
+   - `ListAllMyBuckets` (to list all account buckets)
 
-3. **Política de acceso a Parameter Store**
+3. **Parameter Store Access Policy**
    - `GetParameter`, `GetParameters`, `GetParameterHistory`
    - `GetParametersByPath`, `DescribeParameters`
-   - Permiso de `kms:Decrypt` para SecureStrings
+   - `kms:Decrypt` permission for SecureStrings
 
 **Trust Policy**:
 ```json
@@ -155,55 +155,55 @@ variable "tags" {
 **Variables**:
 ```hcl
 variable "eks_oidc_provider_arn" {
-  description = "ARN del OIDC provider de EKS"
+  description = "EKS OIDC provider ARN"
   type        = string
   default     = ""
 }
 
 variable "eks_oidc_provider_url" {
-  description = "URL del OIDC provider de EKS"
+  description = "EKS OIDC provider URL"
   type        = string
   default     = ""
 }
 
 variable "s3_bucket_arns" {
-  description = "ARNs de buckets S3"
+  description = "S3 bucket ARNs"
   type        = list(string)
   default     = []
 }
 
 variable "parameter_arns" {
-  description = "ARNs de parámetros SSM"
+  description = "SSM parameter ARNs"
   type        = list(string)
   default     = []
 }
 ```
 
-**Nota**: Si no estás usando EKS (por ejemplo, con Kind local), el módulo no creará recursos (count = 0).
+**Note**: If you're not using EKS (e.g., with Kind locally), the module won't create resources (count = 0).
 
-### 4. Módulo GitHub OIDC (`modules/github-oidc`)
+### 4. GitHub OIDC Module (`modules/github-oidc`)
 
-**Propósito**: Configurar autenticación segura entre GitHub Actions y AWS sin credenciales estáticas.
+**Purpose**: Configure secure authentication between GitHub Actions and AWS without static credentials.
 
-**Recursos creados**:
+**Created resources**:
 
-1. **OIDC Provider para GitHub**
+1. **OIDC Provider for GitHub**
    - URL: `https://token.actions.githubusercontent.com`
-   - Thumbprints de GitHub (valores conocidos públicamente)
+   - GitHub thumbprints (publicly known values)
    - Client ID: `sts.amazonaws.com`
 
-2. **IAM Role para GitHub Actions**
-   - Permite a GitHub Actions asumir el rol
-   - Trust policy limita acceso a repositorio específico
-   - Condición: solo workflows del repositorio especificado
+2. **IAM Role for GitHub Actions**
+   - Allows GitHub Actions to assume role
+   - Trust policy limits access to specific repository
+   - Condition: only workflows from specified repository
 
-3. **Política ECR**
+3. **ECR Policy**
    - `ecr:GetAuthorizationToken` (global)
-   - Push/pull de imágenes a ECR
-   - Crear repositorios si no existen
+   - Push/pull images to ECR
+   - Create repositories if they don't exist
 
-4. **Política S3**
-   - Acceso a buckets para artefactos
+4. **S3 Policy**
+   - Access to buckets for artifacts
 
 **Trust Policy**:
 ```json
@@ -230,23 +230,23 @@ variable "parameter_arns" {
 **Variables**:
 ```hcl
 variable "github_org" {
-  description = "Organización o usuario de GitHub"
+  description = "GitHub organization or user"
   type        = string
   default     = ""
 }
 
 variable "github_repo" {
-  description = "Nombre del repositorio"
+  description = "Repository name"
   type        = string
 }
 ```
 
-## 🔧 Variables Principales
+## 🔧 Main Variables
 
-Variables definidas en `variables.tf`:
+Variables defined in `variables.tf`:
 
 ```hcl
-# Obligatorias
+# Required
 variable "region" {
   default = "us-east-1"
 }
@@ -259,9 +259,9 @@ variable "project_name" {
   default = "aws-challenge"
 }
 
-# Para GitHub OIDC
+# For GitHub OIDC
 variable "github_org" {
-  description = "Tu usuario/org de GitHub"
+  description = "Your GitHub user/org"
   default     = ""
 }
 
@@ -269,25 +269,25 @@ variable "github_repo" {
   default = "aws-challenge"
 }
 
-# Para IRSA (solo si usas EKS)
+# For IRSA (only if using EKS)
 variable "eks_cluster_name" {
   default = "aws-challenge-cluster"
 }
 
 variable "eks_oidc_provider_arn" {
-  description = "ARN del OIDC provider (obtener de EKS)"
+  description = "OIDC provider ARN (get from EKS)"
   default     = ""
 }
 
 variable "eks_oidc_provider_url" {
-  description = "URL del OIDC provider (obtener de EKS)"
+  description = "OIDC provider URL (get from EKS)"
   default     = ""
 }
 ```
 
 ## 📤 Outputs
 
-Outputs principales disponibles:
+Main available outputs:
 
 ```hcl
 # S3
@@ -298,7 +298,7 @@ output "s3_bucket_arns"
 output "parameter_store_names"
 output "parameter_store_arns"
 
-# IAM (solo si eks_oidc_provider_arn está configurado)
+# IAM (only if eks_oidc_provider_arn is configured)
 output "auxiliary_service_role_arn"
 output "auxiliary_service_role_name"
 
@@ -308,40 +308,40 @@ output "github_actions_role_name"
 output "github_oidc_provider_arn"
 ```
 
-## 🚀 Uso
+## 🚀 Usage
 
-### Inicialización
+### Initialization
 
 ```bash
 cd terraform
 
-# Inicializar Terraform (descargar providers)
+# Initialize Terraform (download providers)
 terraform init
 ```
 
-### Planificación
+### Planning
 
 ```bash
-# Ver qué recursos se crearán
+# See what resources will be created
 terraform plan
 
-# Con variables personalizadas
+# With custom variables
 terraform plan \
   -var="region=eu-west-1" \
   -var="environment=prod" \
-  -var="github_org=mi-usuario"
+  -var="github_org=my-user"
 ```
 
-### Aplicación
+### Application
 
 ```bash
-# Crear infraestructura
+# Create infrastructure
 terraform apply
 
-# O con auto-approve (no recomendado en prod)
+# Or with auto-approve (not recommended in prod)
 terraform apply -auto-approve
 
-# Con variables
+# With variables
 terraform apply \
   -var="region=us-east-1" \
   -var="environment=dev" \
@@ -351,59 +351,59 @@ terraform apply \
 ### Outputs
 
 ```bash
-# Ver todos los outputs
+# View all outputs
 terraform output
 
-# Output específico
+# Specific output
 terraform output s3_bucket_names
 
-# En formato JSON (útil para scripts)
+# In JSON format (useful for scripts)
 terraform output -json > terraform-outputs.json
 ```
 
-### Destrucción
+### Destruction
 
 ```bash
-# Eliminar toda la infraestructura
+# Delete all infrastructure
 terraform destroy
 
-# Con variables
+# With variables
 terraform destroy -var="environment=dev"
 ```
 
-## 🔒 Seguridad
+## 🔒 Security
 
-### Mejores Prácticas Implementadas
+### Implemented Best Practices
 
-1. **Cifrado**:
-   - S3: AES256 por defecto
-   - Parameter Store: SecureString con KMS
+1. **Encryption**:
+   - S3: AES256 by default
+   - Parameter Store: SecureString with KMS
 
-2. **Acceso Mínimo**:
-   - Políticas IAM con permisos específicos
-   - No se usan wildcards innecesarios
+2. **Minimum Access**:
+   - IAM policies with specific permissions
+   - No unnecessary wildcards
 
-3. **Bloqueo Público**:
-   - Todos los buckets S3 bloquean acceso público
+3. **Public Block**:
+   - All S3 buckets block public access
 
-4. **OIDC en lugar de credenciales**:
-   - GitHub Actions usa OIDC
-   - Kubernetes usa IRSA (si EKS)
+4. **OIDC instead of credentials**:
+   - GitHub Actions uses OIDC
+   - Kubernetes uses IRSA (if EKS)
 
-5. **Versionado**:
-   - Buckets importantes tienen versionado
+5. **Versioning**:
+   - Important buckets have versioning enabled
 
 6. **Tags**:
-   - Todos los recursos están etiquetados para auditoría
+   - All resources are tagged for auditing
 
 ### State Management
 
-Para producción, configura backend remoto en `versions.tf`:
+For production, configure remote backend in `versions.tf`:
 
 ```hcl
 terraform {
   backend "s3" {
-    bucket         = "tu-bucket-terraform-state"
+    bucket         = "your-terraform-state-bucket"
     key            = "aws-challenge/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
@@ -416,35 +416,35 @@ terraform {
 
 ### Error: "No valid credential sources"
 
-**Solución**: Configura AWS CLI:
+**Solution**: Configure AWS CLI:
 ```bash
 aws configure
 ```
 
 ### Error: "Bucket name already exists"
 
-**Causa**: Los nombres de S3 buckets son globales
+**Cause**: S3 bucket names are global
 
-**Solución**: El código usa account ID para hacerlos únicos, pero si persiste:
+**Solution**: Code uses account ID to make them unique, but if it persists:
 ```bash
-# Cambia el project_name
+# Change the project_name
 terraform apply -var="project_name=aws-challenge-unique-name"
 ```
 
-### Error: OIDC provider no encontrado
+### Error: OIDC provider not found
 
-**Causa**: `eks_oidc_provider_arn` no configurado
+**Cause**: `eks_oidc_provider_arn` not configured
 
-**Solución**: Si usas EKS local (Kind/Minikube), deja vacío. Si usas EKS real:
+**Solution**: If using local EKS (Kind/Minikube), leave empty. If using real EKS:
 ```bash
-# Obtener OIDC provider ARN
-aws eks describe-cluster --name tu-cluster --query "cluster.identity.oidc.issuer" --output text
+# Get OIDC provider ARN
+aws eks describe-cluster --name your-cluster --query "cluster.identity.oidc.issuer" --output text
 
-# Usar en Terraform
+# Use in Terraform
 terraform apply -var="eks_oidc_provider_arn=arn:aws:iam::..."
 ```
 
-## 📚 Referencias
+## 📚 References
 
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 - [IRSA Documentation](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)

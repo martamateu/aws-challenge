@@ -1,38 +1,38 @@
 # Testing Documentation
 
-Esta guía explica cómo ejecutar y escribir tests para los microservicios.
+This guide explains how to run and write tests for the microservices.
 
-## 📋 Tabla de Contenidos
+## 📋 Table of Contents
 
-- [Ejecutar Tests](#ejecutar-tests)
-- [Estructura de Tests](#estructura-de-tests)
-- [Cobertura de Tests](#cobertura-de-tests)
-- [Escribir Nuevos Tests](#escribir-nuevos-tests)
+- [Running Tests](#running-tests)
+- [Test Structure](#test-structure)
+- [Test Coverage](#test-coverage)
+- [Writing New Tests](#writing-new-tests)
 - [CI/CD](#cicd)
 
-## 🧪 Ejecutar Tests
+## 🧪 Running Tests
 
 ### Main API
 
 ```bash
 cd services/main-api
 
-# Instalar dependencias de test
+# Install test dependencies
 pip install -r requirements-test.txt
 
-# Ejecutar todos los tests
+# Run all tests
 pytest
 
-# Ejecutar con cobertura
+# Run with coverage
 pytest --cov=app --cov-report=html
 
-# Ejecutar un archivo específico
+# Run specific file
 pytest tests/test_main.py
 
-# Ejecutar un test específico
+# Run specific test
 pytest tests/test_main.py::test_health_endpoint_healthy
 
-# Ver cobertura en el navegador
+# View coverage in browser
 open htmlcov/index.html
 ```
 
@@ -41,100 +41,100 @@ open htmlcov/index.html
 ```bash
 cd services/auxiliary-service
 
-# Instalar dependencias de test
+# Install test dependencies
 pip install -r requirements-test.txt
 
-# Ejecutar todos los tests
+# Run all tests
 pytest
 
-# Ejecutar con cobertura
+# Run with coverage
 pytest --cov=app --cov-report=html
 
-# Ejecutar tests que usan AWS mocks
+# Run tests using AWS mocks
 pytest tests/test_aws_operations.py -v
 
-# Ver cobertura en el navegador
+# View coverage in browser
 open htmlcov/index.html
 ```
 
-## 📂 Estructura de Tests
+## 📂 Test Structure
 
 ### Main API Tests
 
 ```
 services/main-api/tests/
 ├── __init__.py
-├── conftest.py              # Fixtures compartidos
-├── test_main.py             # Tests de endpoints principales
-└── test_aws_resources.py    # Tests de endpoints AWS
+├── conftest.py              # Shared fixtures
+├── test_main.py             # Main endpoint tests
+└── test_aws_resources.py    # AWS endpoint tests
 ```
 
-**test_main.py** - Tests de:
-- ✅ Health endpoint (healthy y degraded)
+**test_main.py** - Tests for:
+- ✅ Health endpoint (healthy and degraded)
 - ✅ Version endpoint
 - ✅ Metrics (Prometheus)
 - ✅ OpenAPI docs
-- ✅ Middleware de versión
+- ✅ Version middleware
 - ✅ CORS headers
 
-**test_aws_resources.py** - Tests de:
-- ✅ Listar buckets S3
-- ✅ Listar parámetros SSM
-- ✅ Obtener valor de parámetro
-- ✅ Manejo de errores
+**test_aws_resources.py** - Tests for:
+- ✅ List S3 buckets
+- ✅ List SSM parameters
+- ✅ Get parameter value
+- ✅ Error handling
 
 ### Auxiliary Service Tests
 
 ```
 services/auxiliary-service/tests/
 ├── __init__.py
-├── conftest.py              # Fixtures con mocks de AWS
-├── test_main.py             # Tests de endpoints principales
-└── test_aws_operations.py   # Tests de operaciones AWS
+├── conftest.py              # Fixtures with AWS mocks
+├── test_main.py             # Main endpoint tests
+└── test_aws_operations.py   # AWS operations tests
 ```
 
-**test_main.py** - Tests de:
+**test_main.py** - Tests for:
 - ✅ Health endpoint
 - ✅ Version endpoint
 - ✅ Metrics (Prometheus)
 - ✅ OpenAPI docs
 
-**test_aws_operations.py** - Tests de:
-- ✅ S3: Listar buckets (con moto)
-- ✅ SSM: Listar parámetros (con moto)
-- ✅ SSM: Obtener valor de parámetro
-- ✅ SSM: Parámetros SecureString
-- ✅ Manejo de errores y edge cases
+**test_aws_operations.py** - Tests for:
+- ✅ S3: List buckets (with moto)
+- ✅ SSM: List parameters (with moto)
+- ✅ SSM: Get parameter value
+- ✅ SSM: SecureString parameters
+- ✅ Error handling and edge cases
 
-## 📊 Cobertura de Tests
+## 📊 Test Coverage
 
-### Objetivos de Cobertura
+### Coverage Goals
 
-- **Mínimo aceptable**: 70%
-- **Objetivo**: 80%+
+- **Minimum acceptable**: 70%
+- **Target**: 80%+
 - **Ideal**: 90%+
 
-### Ver Reporte de Cobertura
+### View Coverage Report
 
 ```bash
-# Generar reporte HTML
+# Generate HTML report
 pytest --cov=app --cov-report=html
 
-# Generar reporte en terminal
+# Generate terminal report
 pytest --cov=app --cov-report=term-missing
 
-# Generar reporte XML (para CI/CD)
+# Generate XML report (for CI/CD)
 pytest --cov=app --cov-report=xml
 ```
 
-### Archivos Excluidos de Cobertura
+### Files Excluded from Coverage
 
-Los siguientes archivos están excluidos del análisis de cobertura:
+The following files are excluded from coverage analysis:
 - `__init__.py`
 - Tests themselves
-- Configuración y settings
+- Configuration and settings
 
-## ✍️ Escribir Nuevos Tests
+## ✍️ Writing New Tests
 
 ### Test Template - Main API
 
@@ -165,7 +165,7 @@ async def test_async_feature(client):
     pass
 ```
 
-### Test Template - Auxiliary Service (con AWS Mocks)
+### Test Template - Auxiliary Service (with AWS Mocks)
 
 ```python
 """
@@ -213,14 +213,14 @@ def test_ssm_operation(client, aws_credentials):
     assert data['value'] == 'test-value'
 ```
 
-### Buenas Prácticas
+### Best Practices
 
-1. **Nombre descriptivo**: `test_what_when_expected`
+1. **Descriptive name**: `test_what_when_expected`
    ```python
    def test_health_endpoint_when_service_down_returns_degraded()
    ```
 
-2. **Arrange-Act-Assert**: Estructura clara
+2. **Arrange-Act-Assert**: Clear structure
    ```python
    def test_example():
        # Arrange
@@ -233,39 +233,39 @@ def test_ssm_operation(client, aws_credentials):
        assert result == expected
    ```
 
-3. **Un concepto por test**: No mezclar múltiples validaciones
+3. **One concept per test**: Don't mix multiple validations
 
-4. **Tests independientes**: No depender del orden de ejecución
+4. **Independent tests**: Don't depend on execution order
 
-5. **Mocks apropiados**: Usar fixtures para servicios externos
+5. **Appropriate mocks**: Use fixtures for external services
 
 ## 🔄 CI/CD
 
 ### GitHub Actions
 
-Los tests se ejecutan automáticamente en cada push y pull request:
+Tests run automatically on every push and pull request:
 
 ```yaml
 - Run tests
 - Generate coverage report
-- Upload to Codecov (opcional)
+- Upload to Codecov (optional)
 ```
 
-### Workflow Local
+### Local Workflow
 
-Antes de hacer push:
+Before pushing:
 
 ```bash
-# 1. Ejecutar tests
+# 1. Run tests
 pytest
 
-# 2. Verificar cobertura
+# 2. Check coverage
 pytest --cov=app --cov-report=term
 
-# 3. Verificar linting (opcional)
+# 3. Check linting (optional)
 flake8 app/ tests/
 
-# 4. Si todo pasa, hacer commit
+# 4. If everything passes, commit
 git add .
 git commit -m "feat: New feature with tests"
 git push
@@ -273,18 +273,18 @@ git push
 
 ## 🐛 Debugging Tests
 
-### Modo Verbose
+### Verbose Mode
 
 ```bash
 pytest -v                    # Verbose
 pytest -vv                   # Very verbose
-pytest -s                    # Sin capturar output (ver prints)
-pytest -x                    # Parar en primer fallo
+pytest -s                    # Don't capture output (see prints)
+pytest -x                    # Stop on first failure
 pytest --lf                  # Re-run last failed
-pytest --tb=short           # Traceback corto
+pytest --tb=short           # Short traceback
 ```
 
-### Debug con pdb
+### Debug with pdb
 
 ```python
 def test_something():
@@ -292,14 +292,14 @@ def test_something():
     # Your test code
 ```
 
-O usar pytest con pdb:
+Or use pytest with pdb:
 
 ```bash
 pytest --pdb                 # Drop to pdb on failure
 pytest --trace              # Start pdb at test start
 ```
 
-## 📚 Recursos
+## 📚 Resources
 
 - [Pytest Documentation](https://docs.pytest.org/)
 - [Moto Documentation](https://docs.getmoto.org/)
@@ -308,15 +308,15 @@ pytest --trace              # Start pdb at test start
 
 ## ❓ FAQs
 
-### ¿Por qué fallan los tests en CI pero pasan localmente?
+### Why do tests fail in CI but pass locally?
 
-- Verifica las versiones de dependencias
-- Asegúrate de tener los mismos requirements
-- Revisa variables de entorno
+- Check dependency versions
+- Ensure you have the same requirements
+- Review environment variables
 
-### ¿Cómo mockear AWS services?
+### How to mock AWS services?
 
-Usa `moto` para mockear servicios AWS:
+Use `moto` to mock AWS services:
 
 ```python
 from moto import mock_s3
@@ -327,9 +327,9 @@ def test_with_s3():
     pass
 ```
 
-### ¿Cómo testear endpoints async?
+### How to test async endpoints?
 
-Usa `pytest-asyncio`:
+Use `pytest-asyncio`:
 
 ```python
 @pytest.mark.asyncio

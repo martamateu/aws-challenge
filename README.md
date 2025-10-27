@@ -1,82 +1,82 @@
 # Kubernetes Deployment with CI/CD & AWS Integration
 
-[![CI/CD Pipeline](https://github.com/YOUR_USERNAME/aws-challenge/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/YOUR_USERNAME/aws-challenge/actions)
+[![CI/CD Pipeline](https://github.com/martamateu/aws-challenge/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/martamateu/aws-challenge/actions)
 
-## 📋 Tabla de Contenidos
+## 📋 Table of Contents
 
-- [Descripción del Proyecto](#descripción-del-proyecto)
-- [Arquitectura](#arquitectura)
-- [Requisitos Previos](#requisitos-previos)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Guía de Configuración](#guía-de-configuración)
-- [Despliegue](#despliegue)
-- [Testing de APIs](#testing-de-apis)
-- [Monitoreo](#monitoreo)
+- [Project Description](#project-description)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Project Structure](#project-structure)
+- [Setup Guide](#setup-guide)
+- [Deployment](#deployment)
+- [API Testing](#api-testing)
+- [Monitoring](#monitoring)
 - [Troubleshooting](#troubleshooting)
 
-## 📖 Descripción del Proyecto
+## 📖 Project Description
 
-Este proyecto implementa una arquitectura de microservicios en Kubernetes que interactúa con AWS, utilizando las mejores prácticas de Cloud Engineering, CI/CD y GitOps.
+This project implements a microservices architecture on Kubernetes that interacts with AWS, using best practices for Cloud Engineering, CI/CD, and GitOps.
 
-### Componentes Principales
+### Main Components
 
-1. **Main API**: API REST que expone endpoints para listar recursos de AWS
-2. **Auxiliary Service**: Servicio backend que maneja las interacciones con AWS S3 y Parameter Store
-3. **Infraestructura**: Definida como código usando Terraform
-4. **CI/CD**: Automatización completa con GitHub Actions usando OIDC
-5. **GitOps**: Despliegue declarativo con Argo CD
-6. **Observabilidad**: Monitoreo con Prometheus y Grafana
+1. **Main API**: REST API that exposes endpoints to list AWS resources
+2. **Auxiliary Service**: Backend service that handles interactions with AWS S3 and Parameter Store
+3. **Infrastructure**: Defined as code using Terraform
+4. **CI/CD**: Complete automation with GitHub Actions using OIDC
+5. **GitOps**: Declarative deployment with Argo CD
+6. **Observability**: Monitoring with Prometheus and Grafana
 
-## 🏗️ Arquitectura
+## 🏗️ Architecture
 
 ![AWS Challenge Architecture](docs/images/architecture.png)
 
-### Flujo de la Arquitectura
+### Architecture Flow
 
-1. **GitHub**: Código fuente y CI/CD Pipeline con GitHub Actions
-2. **Kubernetes Cluster**: Orquestación de microservicios
-   - **Argo CD**: GitOps para deployment management
-   - **Namespace main-api**: Main API Pod con Service (LoadBalancer) en puerto 8000
-   - **Namespace auxiliary-service**: FastAPI App en puerto 8001 con AWS SDK
-   - **Namespace monitoring**: Prometheus y Grafana para observabilidad
-3. **AWS**: Infraestructura cloud
-   - **S3 Buckets**: Almacenamiento de datos, logs y backups
-   - **Parameter Store**: Gestión de configuración centralizada
-   - **IAM Roles/IRSA**: Autenticación y autorización segura
+1. **GitHub**: Source code and CI/CD Pipeline with GitHub Actions
+2. **Kubernetes Cluster**: Microservices orchestration
+   - **Argo CD**: GitOps for deployment management
+   - **Namespace main-api**: Main API Pod with Service (LoadBalancer) on port 8000
+   - **Namespace auxiliary-service**: FastAPI App on port 8001 with AWS SDK
+   - **Namespace monitoring**: Prometheus and Grafana for observability
+3. **AWS**: Cloud infrastructure
+   - **S3 Buckets**: Storage for data, logs, and backups
+   - **Parameter Store**: Centralized configuration management
+   - **IAM Roles/IRSA**: Secure authentication and authorization
 
-## 🔧 Requisitos Previos
+## 🔧 Prerequisites
 
-### Herramientas Necesarias
+### Required Tools
 
 - **Docker**: v20.10+
 - **kubectl**: v1.28+
 - **Terraform**: v1.5+
 - **Helm**: v3.12+
 - **AWS CLI**: v2.13+
-- **Kind/Minikube/K3s**: Para cluster Kubernetes local
+- **Kind/Minikube/K3s**: For local Kubernetes cluster
 
-### Cuentas y Accesos
+### Accounts and Access
 
-- Cuenta de AWS con permisos de administrador
-- Cuenta de GitHub
-- (Opcional) Cuenta de Docker Hub o acceso a Amazon ECR
+- AWS account with administrator permissions
+- GitHub account
+- (Optional) Docker Hub account or Amazon ECR access
 
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 aws-challenge/
 ├── .github/
 │   └── workflows/
-│       ├── ci-cd.yml                 # Pipeline CI/CD principal
-│       └── terraform.yml             # Pipeline para infraestructura
+│       ├── ci-cd.yml                 # Main CI/CD pipeline
+│       └── terraform.yml             # Infrastructure pipeline
 ├── services/
 │   ├── main-api/
 │   │   ├── app/
 │   │   │   ├── __init__.py
 │   │   │   ├── main.py              # FastAPI application
-│   │   │   ├── config.py            # Configuración
+│   │   │   ├── config.py            # Configuration
 │   │   │   └── routers/
-│   │   │       └── aws_resources.py # Endpoints AWS
+│   │   │       └── aws_resources.py # AWS endpoints
 │   │   ├── Dockerfile
 │   │   ├── requirements.txt
 │   │   └── tests/
@@ -91,7 +91,7 @@ aws-challenge/
 │       ├── requirements.txt
 │       └── tests/
 ├── terraform/
-│   ├── main.tf                       # Configuración principal
+│   ├── main.tf                       # Main configuration
 │   ├── variables.tf
 │   ├── outputs.tf
 │   ├── versions.tf
@@ -144,164 +144,164 @@ aws-challenge/
 │       └── dashboards/
 │           └── microservices-dashboard.json
 ├── docs/
-│   ├── SETUP.md                      # Guía de configuración detallada
-│   ├── API.md                        # Documentación de APIs
-│   ├── TERRAFORM.md                  # Documentación Terraform
+│   ├── SETUP.md                      # Detailed setup guide
+│   ├── API.md                        # API documentation
+│   ├── TERRAFORM.md                  # Terraform documentation
 │   └── TROUBLESHOOTING.md
 └── README.md
 ```
 
-## 🚀 Guía de Configuración
+## 🚀 Setup Guide
 
-### 1. Configuración del Entorno Local
+### 1. Local Environment Setup
 
-#### Clonar el repositorio
+#### Clone the repository
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/aws-challenge.git
 cd aws-challenge
 ```
 
-#### Configurar AWS CLI
+#### Configure AWS CLI
 
 ```bash
 aws configure
-# Ingresa tus credenciales de AWS
+# Enter your AWS credentials
 ```
 
-#### Crear cluster Kubernetes local (usando Kind)
+#### Create local Kubernetes cluster (using Kind)
 
 ```bash
-# Instalar Kind
+# Install Kind
 brew install kind  # macOS
 
-# Crear cluster
+# Create cluster
 kind create cluster --name aws-challenge --config kind-config.yaml
 
-# Verificar
+# Verify
 kubectl cluster-info
 kubectl get nodes
 ```
 
-### 2. Desplegar Infraestructura con Terraform
+### 2. Deploy Infrastructure with Terraform
 
 ```bash
 cd terraform
 
-# Inicializar Terraform
+# Initialize Terraform
 terraform init
 
-# Planificar cambios
+# Plan changes
 terraform plan -var="region=us-east-1" -var="environment=dev"
 
-# Aplicar infraestructura
+# Apply infrastructure
 terraform apply -auto-approve
 
-# Guardar outputs importantes
+# Save important outputs
 terraform output -json > terraform-outputs.json
 ```
 
-**Recursos creados:**
+**Created resources:**
 - 3 S3 buckets (data, logs, backups)
-- Parámetros en AWS Systems Manager Parameter Store
-- IAM roles y políticas para IRSA (IAM Roles for Service Accounts)
-- GitHub OIDC provider para CI/CD seguro
-- Service Accounts de Kubernetes
+- Parameters in AWS Systems Manager Parameter Store
+- IAM roles and policies for IRSA (IAM Roles for Service Accounts)
+- GitHub OIDC provider for secure CI/CD
+- Kubernetes Service Accounts
 
-### 3. Configurar GitHub Secrets
+### 3. Configure GitHub Secrets
 
-Agrega los siguientes secrets en tu repositorio de GitHub (Settings > Secrets and variables > Actions):
+Add the following secrets to your GitHub repository (Settings > Secrets and variables > Actions):
 
 ```
 AWS_REGION=us-east-1
 AWS_ACCOUNT_ID=123456789012
 DOCKER_USERNAME=your-docker-username
-DOCKER_PASSWORD=your-docker-password (o token)
+DOCKER_PASSWORD=your-docker-password (or token)
 ```
 
-### 4. Instalar Argo CD
+### 4. Install Argo CD
 
 ```bash
-# Crear namespace
+# Create namespace
 kubectl create namespace argocd
 
-# Instalar Argo CD
+# Install Argo CD
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-# Esperar a que todos los pods estén listos
+# Wait for all pods to be ready
 kubectl wait --for=condition=Ready pods --all -n argocd --timeout=300s
 
-# Obtener password inicial
+# Get initial password
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 
-# Port forward para acceder a la UI
+# Port forward to access the UI
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 
-# Acceder a https://localhost:8080
-# Usuario: admin
-# Password: (el obtenido arriba)
+# Access https://localhost:8080
+# Username: admin
+# Password: (obtained above)
 ```
 
-### 5. Desplegar Aplicaciones con Argo CD
+### 5. Deploy Applications with Argo CD
 
 ```bash
-# Aplicar las Applications de Argo CD
+# Apply Argo CD Applications
 kubectl apply -f kubernetes/argocd/applications/
 
-# Verificar el estado
+# Verify status
 kubectl get applications -n argocd
 
-# Sincronizar aplicaciones
+# Sync applications
 argocd app sync main-api
 argocd app sync auxiliary-service
 ```
 
-### 6. Instalar Stack de Monitoreo (Opcional)
+### 6. Install Monitoring Stack (Optional)
 
 ```bash
-# Agregar repos de Helm
+# Add Helm repos
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 
-# Instalar Prometheus
+# Install Prometheus
 helm install prometheus prometheus-community/kube-prometheus-stack \
   -n monitoring \
   --create-namespace \
   -f monitoring/prometheus/values.yaml
 
-# Verificar instalación
+# Verify installation
 kubectl get pods -n monitoring
 
-# Acceder a Grafana
+# Access Grafana
 kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
-# Usuario: admin, Password: prom-operator (o el definido en values.yaml)
+# Username: admin, Password: prom-operator (or as defined in values.yaml)
 ```
 
-## 🧪 Testing de APIs
+## 🧪 API Testing
 
-### Verificar que los servicios están corriendo
+### Verify services are running
 
 ```bash
-# Verificar pods
+# Check pods
 kubectl get pods -n main-api
 kubectl get pods -n auxiliary-service
 
-# Obtener servicios
+# Get services
 kubectl get svc -n main-api
 ```
 
-### Acceder a Main API
+### Access Main API
 
 ```bash
 # Port forward
 kubectl port-forward -n main-api svc/main-api-service 8000:80
 
-# O si usas LoadBalancer
+# Or if using LoadBalancer
 export MAIN_API_URL=$(kubectl get svc -n main-api main-api-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
-### Ejemplos de Requests
+### Request Examples
 
 #### 1. Health Check
 
@@ -309,7 +309,7 @@ export MAIN_API_URL=$(kubectl get svc -n main-api main-api-service -o jsonpath='
 curl http://localhost:8000/health
 ```
 
-**Respuesta esperada:**
+**Expected response:**
 ```json
 {
   "status": "healthy",
@@ -319,13 +319,13 @@ curl http://localhost:8000/health
 }
 ```
 
-#### 2. Listar todos los S3 Buckets
+#### 2. List all S3 Buckets
 
 ```bash
 curl http://localhost:8000/api/v1/s3/buckets
 ```
 
-**Respuesta esperada:**
+**Expected response:**
 ```json
 {
   "buckets": [
@@ -347,14 +347,13 @@ curl http://localhost:8000/api/v1/s3/buckets
   "auxiliary_service_version": "1.0.0"
 }
 ```
-
-#### 3. Listar todos los parámetros del Parameter Store
+#### 3. List all Parameter Store parameters
 
 ```bash
 curl http://localhost:8000/api/v1/parameters
 ```
 
-**Respuesta esperada:**
+**Expected response:**
 ```json
 {
   "parameters": [
@@ -375,13 +374,13 @@ curl http://localhost:8000/api/v1/parameters
 }
 ```
 
-#### 4. Obtener valor de un parámetro específico
+#### 4. Get value of a specific parameter
 
 ```bash
 curl http://localhost:8000/api/v1/parameters/value?name=/aws-challenge/dev/database/host
 ```
 
-**Respuesta esperada:**
+**Expected response:**
 ```json
 {
   "name": "/aws-challenge/dev/database/host",
@@ -393,9 +392,9 @@ curl http://localhost:8000/api/v1/parameters/value?name=/aws-challenge/dev/datab
 }
 ```
 
-### Testing con versiones en Headers
+### Testing with versions in Headers
 
-Todas las respuestas también incluyen headers personalizados:
+All responses also include custom headers:
 
 ```bash
 curl -I http://localhost:8000/health
@@ -408,60 +407,60 @@ X-Auxiliary-Service-Version: 1.0.0
 Content-Type: application/json
 ```
 
-## 📊 Monitoreo
+## 📊 Monitoring
 
-### Acceder a Prometheus
+### Access Prometheus
 
 ```bash
 kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
 ```
 
-Abrir http://localhost:9090
+Open http://localhost:9090
 
-### Acceder a Grafana
+### Access Grafana
 
 ```bash
 kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
 ```
 
-Abrir http://localhost:3000
+Open http://localhost:3000
 
-**Dashboards incluidos:**
+**Included dashboards:**
 - Kubernetes Cluster Monitoring
 - Microservices Performance
 - AWS API Calls Metrics
 - Request/Response Times
 
-## 🔒 Seguridad
+## 🔒 Security
 
-### Autenticación con AWS
+### AWS Authentication
 
-Este proyecto utiliza **IRSA (IAM Roles for Service Accounts)** para autenticación segura:
+This project uses **IRSA (IAM Roles for Service Accounts)** for secure authentication:
 
-1. No hay credenciales hardcodeadas
-2. Los pods asumen roles de IAM mediante service accounts de Kubernetes
-3. GitHub Actions usa OIDC para evitar almacenar credenciales estáticas
+1. No hardcoded credentials
+2. Pods assume IAM roles through Kubernetes service accounts
+3. GitHub Actions uses OIDC to avoid storing static credentials
 
 ### Secrets Management
 
-- Secrets de AWS manejados por AWS Secrets Manager / Parameter Store
-- ConfigMaps solo para configuración no sensible
-- Service Accounts con permisos mínimos necesarios (Principle of Least Privilege)
+- AWS secrets managed by AWS Secrets Manager / Parameter Store
+- ConfigMaps only for non-sensitive configuration
+- Service Accounts with minimal necessary permissions (Principle of Least Privilege)
 
 ## 🔄 CI/CD Pipeline
 
-El pipeline de GitHub Actions realiza:
+The GitHub Actions pipeline performs:
 
-1. **Build**: Construye imágenes Docker para ambos servicios
-2. **Test**: Ejecuta tests unitarios y de integración
-3. **Push**: Sube imágenes al registry con tags semánticos
-4. **Update**: Actualiza manifests de Kubernetes con nueva versión
-5. **Deploy**: Argo CD detecta cambios y despliega automáticamente
+1. **Build**: Builds Docker images for both services
+2. **Test**: Runs unit and integration tests
+3. **Push**: Pushes images to registry with semantic tags
+4. **Update**: Updates Kubernetes manifests with new version
+5. **Deploy**: Argo CD detects changes and deploys automatically
 
-### Trigger del Pipeline
+### Pipeline Trigger
 
 ```bash
-# Cualquier push a main dispara el pipeline
+# Any push to main triggers the pipeline
 git add .
 git commit -m "feat: new feature"
 git push origin main
@@ -469,16 +468,16 @@ git push origin main
 
 ## 🐛 Troubleshooting
 
-Ver [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) para soluciones a problemas comunes.
+See [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for solutions to common problems.
 
-## 📝 Licencia
+## 📝 License
 
 MIT License
 
-## 👤 Autor
+## 👤 Author
 
-Marta Mateu - Cloud Engineer Challenge para Kantox
+Marta Mateu - Cloud Engineer Challenge for Kantox
 
 ---
 
-**¿Preguntas o sugerencias?** Abre un issue en este repositorio.
+**Questions or suggestions?** Open an issue in this repository.

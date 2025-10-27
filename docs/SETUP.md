@@ -1,12 +1,12 @@
-# Guía de Configuración Detallada
+# Detailed Setup Guide
 
-Esta guía te llevará paso a paso por la configuración completa del proyecto aws-challenge.
+This guide will walk you through the complete setup of the aws-challenge project step by step.
 
-## 📋 Requisitos Previos
+## 📋 Prerequisites
 
-### Software Necesario
+### Required Software
 
-Asegúrate de tener instalado:
+Make sure you have installed:
 
 ```bash
 # Docker
@@ -28,13 +28,13 @@ aws --version  # >= 2.13
 kind version  # >= 0.20
 ```
 
-### Instalación de Herramientas (macOS)
+### Tools Installation (macOS)
 
 ```bash
-# Usando Homebrew
+# Using Homebrew
 brew install docker kubectl terraform helm awscli kind
 
-# Verificar instalaciones
+# Verify installations
 docker --version
 kubectl version --client
 terraform version
@@ -43,39 +43,39 @@ aws --version
 kind version
 ```
 
-## 🔧 Paso 1: Configuración Inicial
+## 🔧 Step 1: Initial Setup
 
-### 1.1 Clonar el Repositorio
+### 1.1 Clone the Repository
 
 ```bash
-git clone https://github.com/TU_USUARIO/aws-challenge.git
+git clone https://github.com/YOUR_USERNAME/aws-challenge.git
 cd aws-challenge
 ```
 
-### 1.2 Configurar AWS Credentials
+### 1.2 Configure AWS Credentials
 
 ```bash
-# Configurar AWS CLI
+# Configure AWS CLI
 aws configure
 
-# Ingresa:
-# AWS Access Key ID: [tu-access-key]
-# AWS Secret Access Key: [tu-secret-key]
+# Enter:
+# AWS Access Key ID: [your-access-key]
+# AWS Secret Access Key: [your-secret-key]
 # Default region name: us-east-1
 # Default output format: json
 
-# Verificar
+# Verify
 aws sts get-caller-identity
 ```
 
-### 1.3 Actualizar Configuraciones
+### 1.3 Update Configurations
 
-Actualiza los siguientes archivos con tu información:
+Update the following files with your information:
 
-**En `terraform/variables.tf`**:
+**In `terraform/variables.tf`**:
 ```hcl
 variable "github_org" {
-  default     = "tu-usuario-github"  # ← Cambiar
+  default     = "your-github-username"  # ← Change this
 }
 
 variable "github_repo" {
@@ -83,124 +83,124 @@ variable "github_repo" {
 }
 ```
 
-**En `kubernetes/argocd/applications/*.yaml`**:
+**In `kubernetes/argocd/applications/*.yaml`**:
 ```yaml
 source:
-  repoURL: https://github.com/TU_USUARIO/aws-challenge.git  # ← Cambiar
+  repoURL: https://github.com/YOUR_USERNAME/aws-challenge.git  # ← Change this
 ```
 
-**En `kubernetes/base/*/deployment.yaml`**:
+**In `kubernetes/base/*/deployment.yaml`**:
 ```yaml
-image: TU_DOCKERHUB_USERNAME/main-api:latest  # ← Cambiar
+image: YOUR_DOCKERHUB_USERNAME/main-api:latest  # ← Change this
 ```
 
-## 🏗️ Paso 2: Infraestructura con Terraform
+## 🏗️ Step 2: Infrastructure with Terraform
 
-### 2.1 Inicializar y Aplicar Terraform
+### 2.1 Initialize and Apply Terraform
 
 ```bash
 cd terraform
 
-# Inicializar
+# Initialize
 terraform init
 
-# Planificar (revisar cambios)
+# Plan (review changes)
 terraform plan \
   -var="region=us-east-1" \
   -var="environment=dev" \
-  -var="github_org=tu-usuario"
+  -var="github_org=your-username"
 
-# Aplicar
+# Apply
 terraform apply \
   -var="region=us-east-1" \
   -var="environment=dev" \
-  -var="github_org=tu-usuario"
+  -var="github_org=your-username"
 
-# Cuando pregunte, escribe 'yes'
+# When prompted, type 'yes'
 ```
 
-### 2.2 Guardar Outputs
+### 2.2 Save Outputs
 
 ```bash
-# Guardar outputs en archivo
+# Save outputs to file
 terraform output -json > terraform-outputs.json
 
-# Ver outputs importantes
+# View important outputs
 terraform output s3_bucket_names
 terraform output github_actions_role_arn
 terraform output auxiliary_service_role_arn
 ```
 
-### 2.3 Verificar Recursos Creados
+### 2.3 Verify Created Resources
 
 ```bash
-# Verificar S3 buckets
+# Verify S3 buckets
 aws s3 ls | grep aws-challenge
 
-# Verificar parámetros
+# Verify parameters
 aws ssm describe-parameters --query "Parameters[?contains(Name, 'aws-challenge')].[Name,Type]" --output table
 
-# Verificar IAM roles
+# Verify IAM roles
 aws iam list-roles --query "Roles[?contains(RoleName, 'aws-challenge')].RoleName" --output table
 ```
 
-## ⚓ Paso 3: Crear Cluster Kubernetes
+## ⚓ Step 3: Create Kubernetes Cluster
 
-### 3.1 Crear Cluster con Kind
+### 3.1 Create Cluster with Kind
 
 ```bash
-# Volver al directorio raíz
+# Return to root directory
 cd ..
 
-# Crear cluster
+# Create cluster
 kind create cluster --name aws-challenge --config kind-config.yaml
 
-# Verificar
+# Verify
 kubectl cluster-info --context kind-aws-challenge
 kubectl get nodes
 ```
 
-### 3.2 Crear Namespaces
+### 3.2 Create Namespaces
 
 ```bash
-# Crear namespaces
+# Create namespaces
 kubectl apply -f kubernetes/base/namespaces/
 
-# Verificar
+# Verify
 kubectl get namespaces
 ```
 
-## 🎯 Paso 4: Instalar Argo CD
+## 🎯 Step 4: Install Argo CD
 
-### 4.1 Instalar Argo CD
+### 4.1 Install Argo CD
 
 ```bash
-# Crear namespace
+# Create namespace
 kubectl create namespace argocd
 
-# Instalar Argo CD
+# Install Argo CD
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-# Esperar a que esté listo
+# Wait until ready
 kubectl wait --for=condition=Ready pods --all -n argocd --timeout=5m
 ```
 
-### 4.2 Acceder a Argo CD
+### 4.2 Access Argo CD
 
 ```bash
-# Obtener password inicial
+# Get initial password
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-# Guardar este password
+# Save this password
 
 # Port forward
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 
-# En otro terminal, abrir: https://localhost:8080
-# Usuario: admin
-# Password: (el obtenido arriba)
+# In another terminal, open: https://localhost:8080
+# Username: admin
+# Password: (obtained above)
 ```
 
-### 4.3 (Opcional) Instalar CLI de Argo CD
+### 4.3 (Optional) Install Argo CD CLI
 
 ```bash
 # macOS
@@ -209,131 +209,131 @@ brew install argocd
 # Login
 argocd login localhost:8080 --insecure --username admin --password <password>
 
-# Cambiar password
+# Change password
 argocd account update-password
 ```
 
-## 🐳 Paso 5: Construir y Publicar Imágenes Docker
+## 🐳 Step 5: Build and Publish Docker Images
 
-### 5.1 Login a Docker Hub
+### 5.1 Login to Docker Hub
 
 ```bash
 docker login
-# Ingresa tu usuario y password de Docker Hub
+# Enter your Docker Hub username and password
 ```
 
-### 5.2 Construir y Publicar Main API
+### 5.2 Build and Publish Main API
 
 ```bash
-# Ir al directorio
+# Go to directory
 cd services/main-api
 
-# Construir imagen
-docker build -t TU_DOCKERHUB_USERNAME/main-api:latest .
+# Build image
+docker build -t YOUR_DOCKERHUB_USERNAME/main-api:latest .
 
-# Publicar
-docker push TU_DOCKERHUB_USERNAME/main-api:latest
+# Publish
+docker push YOUR_DOCKERHUB_USERNAME/main-api:latest
 
-# Volver
+# Return
 cd ../..
 ```
 
-### 5.3 Construir y Publicar Auxiliary Service
+### 5.3 Build and Publish Auxiliary Service
 
 ```bash
-# Ir al directorio
+# Go to directory
 cd services/auxiliary-service
 
-# Construir imagen
-docker build -t TU_DOCKERHUB_USERNAME/auxiliary-service:latest .
+# Build image
+docker build -t YOUR_DOCKERHUB_USERNAME/auxiliary-service:latest .
 
-# Publicar
-docker push TU_DOCKERHUB_USERNAME/auxiliary-service:latest
+# Publish
+docker push YOUR_DOCKERHUB_USERNAME/auxiliary-service:latest
 
-# Volver
+# Return
 cd ../..
 ```
 
-## 🚀 Paso 6: Desplegar Aplicaciones
+## 🚀 Step 6: Deploy Applications
 
-### 6.1 Configurar Service Account (si usas EKS)
+### 6.1 Configure Service Account (if using EKS)
 
-Si estás usando EKS con IRSA, actualiza:
+If you're using EKS with IRSA, update:
 
 ```bash
-# Obtener ARN del role
+# Get role ARN
 ROLE_ARN=$(cd terraform && terraform output -raw auxiliary_service_role_arn)
 
-# Actualizar ServiceAccount
+# Update ServiceAccount
 kubectl annotate serviceaccount auxiliary-service-sa \
   -n auxiliary-service \
   eks.amazonaws.com/role-arn=$ROLE_ARN
 ```
 
-### 6.2 Desplegar con Argo CD
+### 6.2 Deploy with Argo CD
 
 ```bash
-# Aplicar Applications
+# Apply Applications
 kubectl apply -f kubernetes/argocd/applications/
 
-# Verificar
+# Verify
 kubectl get applications -n argocd
 
-# Sincronizar (manual si auto-sync está deshabilitado)
+# Sync (manual if auto-sync is disabled)
 argocd app sync main-api
 argocd app sync auxiliary-service
 
-# Ver estado
+# View status
 argocd app list
 ```
 
-### 6.3 Verificar Despliegue
+### 6.3 Verify Deployment
 
 ```bash
-# Verificar pods Main API
+# Verify Main API pods
 kubectl get pods -n main-api
 kubectl logs -n main-api -l app=main-api
 
-# Verificar pods Auxiliary Service
+# Verify Auxiliary Service pods
 kubectl get pods -n auxiliary-service
 kubectl logs -n auxiliary-service -l app=auxiliary-service
 
-# Verificar servicios
+# Verify services
 kubectl get svc -n main-api
 kubectl get svc -n auxiliary-service
 ```
 
-## 🧪 Paso 7: Testing
+## 🧪 Step 7: Testing
 
-### 7.1 Port Forward para Testing Local
+### 7.1 Port Forward for Local Testing
 
 ```bash
 # Main API
 kubectl port-forward -n main-api svc/main-api-service 8000:80
 
-# En otro terminal, probar
+# In another terminal, test
 curl http://localhost:8000/health
 ```
 
-### 7.2 Probar Endpoints
+### 7.2 Test Endpoints
 
 ```bash
 # Health check
 curl http://localhost:8000/health | jq
 
-# Listar S3 buckets
+# List S3 buckets
 curl http://localhost:8000/api/v1/s3/buckets | jq
 
-# Listar parámetros
+# List parameters
 curl http://localhost:8000/api/v1/parameters | jq
 
-# Obtener parámetro específico
+# Get specific parameter
 curl "http://localhost:8000/api/v1/parameters/value?name=/aws-challenge/dev/database/host" | jq
 ```
 
-## 📊 Paso 8: Configurar Monitoreo (Opcional)
+## 📊 Step 8: Configure Monitoring (Optional)
 
-### 8.1 Agregar Helm Repos
+### 8.1 Add Helm Repos
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -341,117 +341,117 @@ helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 ```
 
-### 8.2 Instalar Prometheus Stack
+### 8.2 Install Prometheus Stack
 
 ```bash
-# Instalar
+# Install
 helm install prometheus prometheus-community/kube-prometheus-stack \
   -n monitoring \
   --create-namespace \
   -f monitoring/prometheus/values.yaml
 
-# Verificar
+# Verify
 kubectl get pods -n monitoring
 ```
 
-### 8.3 Acceder a Grafana
+### 8.3 Access Grafana
 
 ```bash
 # Port forward
 kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
 
-# Abrir http://localhost:3000
-# Usuario: admin
-# Password: admin123 (o el definido en values.yaml)
+# Open http://localhost:3000
+# Username: admin
+# Password: admin123 (or as defined in values.yaml)
 ```
 
-## 🔐 Paso 9: Configurar GitHub Actions
+## 🔐 Step 9: Configure GitHub Actions
 
-### 9.1 Configurar Secrets en GitHub
+### 9.1 Configure GitHub Secrets
 
-Ve a tu repositorio en GitHub:
+Go to your GitHub repository:
 1. Settings > Secrets and variables > Actions
 2. Click "New repository secret"
 
-Agrega los siguientes secrets:
+Add the following secrets:
 
 ```
 AWS_REGION = us-east-1
-AWS_ACCOUNT_ID = (tu account ID, obtener con: aws sts get-caller-identity)
-DOCKER_USERNAME = (tu usuario de Docker Hub)
-DOCKER_PASSWORD = (tu password o token de Docker Hub)
+AWS_ACCOUNT_ID = (your account ID, get with: aws sts get-caller-identity)
+DOCKER_USERNAME = (your Docker Hub username)
+DOCKER_PASSWORD = (your Docker Hub password or token)
 ```
 
-### 9.2 Obtener Role ARN para GitHub Actions
+### 9.2 Get Role ARN for GitHub Actions
 
 ```bash
 cd terraform
 terraform output -raw github_actions_role_arn
-# Copiar este ARN
+# Copy this ARN
 ```
 
-Agregar como secret:
+Add as secret:
 ```
-AWS_ROLE_ARN = (el ARN obtenido)
+AWS_ROLE_ARN = (the ARN obtained)
 ```
 
-### 9.3 Probar Pipeline
+### 9.3 Test Pipeline
 
 ```bash
-# Hacer un cambio pequeño
+# Make a small change
 echo "# Test change" >> README.md
 
-# Commit y push
+# Commit and push
 git add .
 git commit -m "test: trigger CI/CD pipeline"
 git push origin main
 
-# Ver en GitHub Actions
-# Ve a: https://github.com/TU_USUARIO/aws-challenge/actions
+# View in GitHub Actions
+# Go to: https://github.com/YOUR_USERNAME/aws-challenge/actions
 ```
 
-## ✅ Verificación Final
+## ✅ Final Verification
 
-### Checklist de Verificación
+### Verification Checklist
 
-- [ ] Terraform aplicado correctamente
-- [ ] S3 buckets creados
-- [ ] Parámetros en Parameter Store
-- [ ] Cluster Kubernetes funcionando
-- [ ] Argo CD instalado y accesible
-- [ ] Imágenes Docker publicadas
-- [ ] Main API desplegada y saludable
-- [ ] Auxiliary Service desplegado y saludable
-- [ ] Endpoints respondiendo correctamente
-- [ ] GitHub Actions configurado
-- [ ] (Opcional) Prometheus y Grafana funcionando
+- [ ] Terraform applied successfully
+- [ ] S3 buckets created
+- [ ] Parameters in Parameter Store
+- [ ] Kubernetes cluster running
+- [ ] Argo CD installed and accessible
+- [ ] Docker images published
+- [ ] Main API deployed and healthy
+- [ ] Auxiliary Service deployed and healthy
+- [ ] Endpoints responding correctly
+- [ ] GitHub Actions configured
+- [ ] (Optional) Prometheus and Grafana running
 
-### Comandos de Verificación Rápida
+### Quick Verification Commands
 
 ```bash
-# Ver todo el stack
+# View entire stack
 kubectl get all -n main-api
 kubectl get all -n auxiliary-service
 
-# Ver aplicaciones de Argo CD
+# View Argo CD applications
 kubectl get applications -n argocd
 
-# Ver health de todo
+# View health of everything
 kubectl get pods --all-namespaces | grep -v Running
-# (no debería mostrar nada)
+# (should not display anything)
 ```
 
-## 🎓 Próximos Pasos
+## 🎓 Next Steps
 
-1. Personaliza los dashboards de Grafana
-2. Agrega tests unitarios y de integración
-3. Implementa staging environment
-4. Configura alertas en Prometheus
-5. Optimiza recursos de Kubernetes
+1. Customize Grafana dashboards
+2. Add unit and integration tests
+3. Implement staging environment
+4. Configure Prometheus alerts
+5. Optimize Kubernetes resources
 
-## 📞 Soporte
+## 📞 Support
 
-Si encuentras problemas, consulta:
+If you encounter problems, check:
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
-- [Documentación de Terraform](TERRAFORM.md)
-- [Documentación de API](API.md)
+- [Terraform Documentation](TERRAFORM.md)
+- [API Documentation](API.md)
