@@ -29,7 +29,7 @@ aws configure
 # O exportar variables de entorno
 export AWS_ACCESS_KEY_ID="tu-access-key"
 export AWS_SECRET_ACCESS_KEY="tu-secret-key"
-export AWS_REGION="us-east-1"
+export AWS_REGION="your-aws-region"
 
 # Verificar
 aws sts get-caller-identity
@@ -569,14 +569,14 @@ aws iam get-role --role-name aws-challenge-github-actions-dev \
   --query 'Role.AssumeRolePolicyDocument'
 
 # Debe incluir:
-# "token.actions.githubusercontent.com:sub": "repo:YOUR_ORG/YOUR_REPO:*"
+# "token.actions.githubusercontent.com:sub": "repo:your-github-org/your-repo-name:*"
 
 # Verificar que github_org está configurado en Terraform
 cd terraform
 terraform output github_actions_role_arn
 
 # Re-aplicar si es necesario
-terraform apply -var="github_org=tu-usuario"
+terraform apply -var="github_org=your-github-username"
 ```
 
 ## 🔧 Comandos Útiles de Debugging

@@ -158,7 +158,7 @@ aws-challenge/
 #### Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/aws-challenge.git
+git clone https://github.com/your-github-username/aws-challenge.git
 cd aws-challenge
 ```
 
@@ -192,7 +192,7 @@ cd terraform
 terraform init
 
 # Plan changes
-terraform plan -var="region=us-east-1" -var="environment=dev"
+terraform plan -var="region=your-aws-region" -var="environment=dev"
 
 # Apply infrastructure
 terraform apply -auto-approve
@@ -213,10 +213,10 @@ terraform output -json > terraform-outputs.json
 Add the following secrets to your GitHub repository (Settings > Secrets and variables > Actions):
 
 ```
-AWS_REGION=us-east-1
-AWS_ACCOUNT_ID=123456789012
+AWS_REGION=your-aws-region
+AWS_ACCOUNT_ID=your-aws-account-id
 DOCKER_USERNAME=your-docker-username
-DOCKER_PASSWORD=your-docker-password (or token)
+DOCKER_PASSWORD=your-docker-password
 ```
 
 ### 4. Install Argo CD

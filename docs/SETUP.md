@@ -48,7 +48,7 @@ kind version
 ### 1.1 Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/aws-challenge.git
+git clone https://github.com/your-github-username/aws-challenge.git
 cd aws-challenge
 ```
 
@@ -59,9 +59,9 @@ cd aws-challenge
 aws configure
 
 # Enter:
-# AWS Access Key ID: [your-access-key]
-# AWS Secret Access Key: [your-secret-key]
-# Default region name: us-east-1
+# AWS Access Key ID: your-access-key-id
+# AWS Secret Access Key: your-secret-access-key
+# Default region name: your-aws-region
 # Default output format: json
 
 # Verify
@@ -86,12 +86,12 @@ variable "github_repo" {
 **In `kubernetes/argocd/applications/*.yaml`**:
 ```yaml
 source:
-  repoURL: https://github.com/YOUR_USERNAME/aws-challenge.git  # ← Change this
+  repoURL: https://github.com/your-github-username/aws-challenge.git  # ← Change this
 ```
 
 **In `kubernetes/base/*/deployment.yaml`**:
 ```yaml
-image: YOUR_DOCKERHUB_USERNAME/main-api:latest  # ← Change this
+image: your-dockerhub-username/main-api:latest  # ← Change this
 ```
 
 ## 🏗️ Step 2: Infrastructure with Terraform
@@ -106,15 +106,15 @@ terraform init
 
 # Plan (review changes)
 terraform plan \
-  -var="region=us-east-1" \
+  -var="region=your-aws-region" \
   -var="environment=dev" \
-  -var="github_org=your-username"
+  -var="github_org=your-github-username"
 
 # Apply
 terraform apply \
-  -var="region=us-east-1" \
+  -var="region=your-aws-region" \
   -var="environment=dev" \
-  -var="github_org=your-username"
+  -var="github_org=your-github-username"
 
 # When prompted, type 'yes'
 ```
@@ -229,10 +229,10 @@ docker login
 cd services/main-api
 
 # Build image
-docker build -t YOUR_DOCKERHUB_USERNAME/main-api:latest .
+docker build -t your-dockerhub-username/main-api:latest .
 
 # Publish
-docker push YOUR_DOCKERHUB_USERNAME/main-api:latest
+docker push your-dockerhub-username/main-api:latest
 
 # Return
 cd ../..
@@ -245,10 +245,10 @@ cd ../..
 cd services/auxiliary-service
 
 # Build image
-docker build -t YOUR_DOCKERHUB_USERNAME/auxiliary-service:latest .
+docker build -t your-dockerhub-username/auxiliary-service:latest .
 
 # Publish
-docker push YOUR_DOCKERHUB_USERNAME/auxiliary-service:latest
+docker push your-dockerhub-username/auxiliary-service:latest
 
 # Return
 cd ../..
@@ -376,10 +376,10 @@ Go to your GitHub repository:
 Add the following secrets:
 
 ```
-AWS_REGION = us-east-1
-AWS_ACCOUNT_ID = (your account ID, get with: aws sts get-caller-identity)
-DOCKER_USERNAME = (your Docker Hub username)
-DOCKER_PASSWORD = (your Docker Hub password or token)
+AWS_REGION=your-aws-region
+AWS_ACCOUNT_ID=your-aws-account-id
+DOCKER_USERNAME=your-docker-username
+DOCKER_PASSWORD=your-docker-password
 ```
 
 ### 9.2 Get Role ARN for GitHub Actions
@@ -407,7 +407,7 @@ git commit -m "test: trigger CI/CD pipeline"
 git push origin main
 
 # View in GitHub Actions
-# Go to: https://github.com/YOUR_USERNAME/aws-challenge/actions
+# Go to: https://github.com/your-github-username/aws-challenge/actions
 ```
 
 ## ✅ Final Verification

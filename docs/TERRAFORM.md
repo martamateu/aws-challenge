@@ -327,9 +327,9 @@ terraform plan
 
 # With custom variables
 terraform plan \
-  -var="region=eu-west-1" \
+  -var="region=your-aws-region" \
   -var="environment=prod" \
-  -var="github_org=my-user"
+  -var="github_org=your-github-username"
 ```
 
 ### Application
@@ -343,9 +343,9 @@ terraform apply -auto-approve
 
 # With variables
 terraform apply \
-  -var="region=us-east-1" \
+  -var="region=your-aws-region" \
   -var="environment=dev" \
-  -var="github_org=marta-mateu"
+  -var="github_org=your-github-username"
 ```
 
 ### Outputs
