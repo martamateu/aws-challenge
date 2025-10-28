@@ -162,11 +162,10 @@ git clone https://github.com/your-github-username/aws-challenge.git
 cd aws-challenge
 ```
 
-#### Configure AWS CLI
+#### Configure AWS
 
 ```bash
-aws configure
-# Enter your AWS credentials
+aws configure  # Enter your credentials (Access Key ID, Secret Access Key, region)
 ```
 
 #### Create local Kubernetes cluster (using Kind)
@@ -194,45 +193,44 @@ terraform init
 # Plan changes
 terraform plan -var="region=your-aws-region" -var="environment=dev"
 
-# Apply infrastructure
-terraform apply -auto-approve
+## 📁 Project Structure
 
-# Save important outputs
-terraform output -json > terraform-outputs.json
+The repository layout is organized for clarity between services, infrastructure, Kubernetes manifests, monitoring and documentation.
+
 ```
-
-**Created resources:**
-- 3 S3 buckets (data, logs, backups)
-- Parameters in AWS Systems Manager Parameter Store
-- IAM roles and policies for IRSA (IAM Roles for Service Accounts)
-- GitHub OIDC provider for secure CI/CD
-- Kubernetes Service Accounts
-
-### 3. Configure GitHub Secrets
-
-Add the following secrets to your GitHub repository (Settings > Secrets and variables > Actions):
-
-```bash
-# AWS Configuration (using OIDC - no static credentials needed!)
-AWS_ROLE_ARN=arn:aws:iam::your-account-id:role/aws-challenge-github-actions-dev
-AWS_DEFAULT_REGION=your-aws-region
-
-# Docker Hub credentials
-DOCKER_USERNAME=your-docker-username
-DOCKER_PASSWORD=your-docker-password-or-token
+aws-challenge/
+├── .github/                         # GitHub Actions workflows (CI/CD)
+│   └── workflows/
+│       ├── ci-cd.yml
+│       └── terraform.yml
+├── services/                        # Application code (FastAPI microservices)
+│   ├── main-api/                    # Main API service
+│   │   ├── app/
+│   │   ├── Dockerfile
+│   │   ├── requirements.txt
+│   │   └── tests/
+│   └── auxiliary-service/           # AWS wrapper service
+│       ├── app/
+│       ├── Dockerfile
+│       ├── requirements.txt
+│       └── tests/
+├── terraform/                       # Infrastructure as Code (AWS)
+│   ├── environments/                # environment-specific stacks (dev, prod)
+│   └── modules/                     # reusable modules (s3, parameter-store, iam, github-oidc)
+├── kubernetes/                      # Kubernetes manifests and ArgoCD apps
+│   ├── base/
+│   │   ├── namespaces/
+│   │   ├── main-api/
+│   │   └── auxiliary-service/
+│   ├── overlays/                    # kustomize overlays for dev/prod
+│   └── argocd/                      # Argo CD application manifests
+├── monitoring/                      # Prometheus/Grafana values and dashboards
+├── docs/                            # Documentation (setup, API, terraform, troubleshooting)
+├── docker-compose.yml               # Local compose for quick dev/testing
+├── kind-config.yaml                 # Kind cluster configuration (local testing)
+├── README.md
+└── .gitignore
 ```
-
-**Get the AWS Role ARN** from Terraform output:
-```bash
-cd terraform/environments/dev
-terraform output github_actions_role_arn
-```
-
-> **Note**: This project uses GitHub OIDC for AWS authentication (best practice). No need for `AWS_ACCESS_KEY_ID` or `AWS_SECRET_ACCESS_KEY`. See `docs/GITHUB-OIDC-SETUP.md` for details.
-
-### 4. Install Argo CD
-
-```bash
 # Create namespace
 kubectl create namespace argocd
 
