@@ -149,7 +149,7 @@
 ### Infrastructure
 - **Terraform**: 26 resources created successfully
 - **AWS Region**: eu-west-1
-- **Account ID**: 182773556126
+
 
 ### Docker
 - **Main API**: Image built and running
