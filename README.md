@@ -144,10 +144,17 @@ aws-challenge/
 │       └── dashboards/
 │           └── microservices-dashboard.json
 ├── docs/
+│   ├── images/
+│   │   ├── architecture.png
+│   │   └── screenshots/
+│   │       ├── dashboard-grafana.png
+│   │       ├── Grafana_Dashboard_main_api.png
+│   │       └── Grafana_Dashboard_auxiliary_Service.png
 │   ├── SETUP.md                      # Detailed setup guide
 │   ├── API.md                        # API documentation
 │   ├── TERRAFORM.md                  # Terraform documentation
-│   └── TROUBLESHOOTING.md
+│   ├── TESTING.md                    # Testing guide
+│   └── AWS-SETUP.md                  # AWS configuration guide
 └── README.md
 ```
 
@@ -193,44 +200,13 @@ terraform init
 # Plan changes
 terraform plan -var="region=your-aws-region" -var="environment=dev"
 
-## 📁 Project Structure
-
-The repository layout is organized for clarity between services, infrastructure, Kubernetes manifests, monitoring and documentation.
-
+# Apply changes
+terraform apply -var="region=your-aws-region" -var="environment=dev"
 ```
-aws-challenge/
-├── .github/                         # GitHub Actions workflows (CI/CD)
-│   └── workflows/
-│       ├── ci-cd.yml
-│       └── terraform.yml
-├── services/                        # Application code (FastAPI microservices)
-│   ├── main-api/                    # Main API service
-│   │   ├── app/
-│   │   ├── Dockerfile
-│   │   ├── requirements.txt
-│   │   └── tests/
-│   └── auxiliary-service/           # AWS wrapper service
-│       ├── app/
-│       ├── Dockerfile
-│       ├── requirements.txt
-│       └── tests/
-├── terraform/                       # Infrastructure as Code (AWS)
-│   ├── environments/                # environment-specific stacks (dev, prod)
-│   └── modules/                     # reusable modules (s3, parameter-store, iam, github-oidc)
-├── kubernetes/                      # Kubernetes manifests and ArgoCD apps
-│   ├── base/
-│   │   ├── namespaces/
-│   │   ├── main-api/
-│   │   └── auxiliary-service/
-│   ├── overlays/                    # kustomize overlays for dev/prod
-│   └── argocd/                      # Argo CD application manifests
-├── monitoring/                      # Prometheus/Grafana values and dashboards
-├── docs/                            # Documentation (setup, API, terraform, troubleshooting)
-├── docker-compose.yml               # Local compose for quick dev/testing
-├── kind-config.yaml                 # Kind cluster configuration (local testing)
-├── README.md
-└── .gitignore
-```
+
+### 3. Install Argo CD
+
+```bash
 # Create namespace
 kubectl create namespace argocd
 
@@ -467,6 +443,20 @@ The project includes ServiceMonitors for automatic metrics discovery:
 - `kubernetes/monitoring/servicemonitor-main-api.yaml` - Scrapes main-api `/metrics`
 - `kubernetes/monitoring/servicemonitor-auxiliary-service.yaml` - Scrapes auxiliary-service `/metrics`
 
+### Screenshots
+
+**Grafana Dashboard - Overview**
+
+![Grafana Dashboard](docs/images/screenshots/dashboard-grafana.png)
+
+**Main API Metrics**
+
+![Main API Dashboard](docs/images/screenshots/Grafana_Dashboard_main_api.png)
+
+**Auxiliary Service Metrics**
+
+![Auxiliary Service Dashboard](docs/images/screenshots/Grafana_Dashboard_auxiliary_Service.png)
+
 ## 🔒 Security
 
 ### AWS Authentication
@@ -504,7 +494,29 @@ git push origin main
 
 ## 🐛 Troubleshooting
 
-See [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for solutions to common problems.
+### Common Issues
+
+**Pods in CrashLoopBackOff**
+```bash
+# Check logs
+kubectl logs -n main-api <pod-name>
+
+# Common cause: Missing AWS credentials in pods
+# Solution: Ensure IRSA is configured or use local Docker Compose for testing
+```
+
+**ImagePullBackOff**
+```bash
+# Use local images for Kind
+kind load docker-image main-api:latest --name aws-challenge
+kind load docker-image auxiliary-service:latest --name aws-challenge
+```
+
+**Port already in use**
+```bash
+# Find and kill process using the port
+lsof -ti:8000 | xargs kill -9
+```
 
 ## 📝 License
 

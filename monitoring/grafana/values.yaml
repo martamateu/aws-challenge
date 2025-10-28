@@ -1,0 +1,82 @@
+# Grafana Helm Chart Values
+# Used with kube-prometheus-stack
+
+grafana:
+  enabled: true
+  
+  adminPassword: "prom-operator"
+  
+  # Persistence
+  persistence:
+    enabled: true
+    size: 1Gi
+  
+  # Service
+  service:
+    type: ClusterIP
+    port: 80
+  
+  # Ingress (disabled for local Kind cluster)
+  ingress:
+    enabled: false
+  
+  # Data sources (Prometheus auto-configured by kube-prometheus-stack)
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://kube-prometheus-stack-prometheus:9090
+        access: proxy
+        isDefault: true
+  
+  # Dashboard providers
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+      - name: 'microservices'
+        orgId: 1
+        folder: 'Microservices'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/microservices
+  
+  # Dashboard ConfigMaps
+  dashboardsConfigMaps:
+    microservices: "grafana-microservices-dashboard"
+  
+  # Resource limits
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # Environment variables
+  env:
+    GF_INSTALL_PLUGINS: "grafana-piechart-panel,grafana-clock-panel"
+  
+  # Additional configuration
+  grafana.ini:
+    server:
+      root_url: "http://localhost:3000"
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
